@@ -79,7 +79,7 @@ but adoptable by anyone who deems it necessary.
 
 %???? and so on, LaTeX as you know and love it. ????
 
-\section{List of user defined functions}
+\section{List of IVOA user defined functions}
 \subsection{Healpix related}
 \subsubsection{\texttt{ivo\_healpix\_index} with ra and dec}
 
@@ -90,6 +90,8 @@ Parameters:
 	\item ra (\texttt{DOUBLE})
 	\item dec (\texttt{DOUBLE})
 \end{itemize}
+
+Returns \texttt{BIGINT}
 
 Returns the index of the (nest) Healpix cell (at the specified order
 hpxOrder) containing the specified spherical point defined as a right
@@ -103,6 +105,8 @@ Parameters:
 	\item hpxOrder (\texttt{INTEGER})
 	\item point (\texttt{POINT})
 \end{itemize}
+
+Returns \texttt{BIGINT}
 
 Returns the index of the (nest) Healpix cell (at the specified order
 hpxOrder) containing the specified spherical point.
@@ -136,7 +140,118 @@ after a given number of Julian years. Positions must be in degrees,
 poper motions are expected in degrees/year. Pmra is assumed to contain
 cos(delta).
 
+
+\subsection{Text related}
+
+\subsubsection{ivo\_string\_agg}
+
+Parameters:
+
+\begin{itemize}
+	\item expression (\texttt{TEXT})
+	\item delimiter (\texttt{TEXT})
+\end{itemize}
+
+Returns \texttt{TEXT}
+
+An aggregate function returning all values of expresion within a GROUP
+concatenated with delimiter.
+
+\subsubsection{ivo\_nocasematch}
+
+Parameters:
+
+\begin{itemize}
+	\item value (\texttt{TEXT})
+	\item pattern (\texttt{TEXT})
+\end{itemize}
+
+Returns \texttt{INTEGER}
+
+Pattern is defined as for the SQL LIKE operator, but the match is
+performed case-insensitively. This function in effect provices a
+surrogate for the ILIKE SQL operator that is missing from ADQL. Returns
+1 if pattern matches, 0 otherwise.
+
+\subsubsection{ivo\_hasword}
+
+Parameters:
+
+\begin{itemize}
+	\item haystack (\texttt{TEXT})
+	\item needle (\texttt{TEXT})
+\end{itemize}
+
+Returns \texttt{INTEGER}.
+
+This is for "google-like" searches in text-like fields. In word you can
+employ a fairly complex query language; see
+http://postgresql.org/docs/8.3/static/textsearch.html for details.
+Returns 1 if needle shows up in haystack, 0 otherwise.
+
+\subsubsection{ivo\_hashlist\_has}
+
+Parameters:
+
+\begin{itemize}
+	\item hashlist (\texttt{TEXT})
+	\item item (\texttt{TEXT})
+\end{itemize}
+
+Returns \texttt{INTEGER}
+
+Takes two string, the first is a list of words not containing the hash
+sign (\#), concatenated by hash strings; the second is a word not
+containing the hash sign. It regurns 1 if, compared case-insensitively,
+the second argument is in the list of words coded in the first argument.
+The behaviour in case the second argument contains a hash sign is
+unspecified.
+
+\subsection{Other}
+
+\subsubsection{ivo\_internal\_overlaps}
+
+Parameters:
+
+\begin{itemize}
+	\item l1 (\texttt{NUMERIC})
+	\item h1 (\texttt{NUMERIC})
+	\item l2 (\texttt{NUMERIC})
+	\item h2 (\texttt{NUMERIC})
+\end{itemize}
+
+Returns \texttt{INTEGER}.
+
+The function returns 1 if the interval \[l1...h2\] overlaps with the
+interval \[l2...h2\]. For the purposes of this function, the case l1=h2 or
+l2=h1 is treated as overlap. The function returns 0 for non-overlapping
+intervals.
+
+\subsubsection{ivo\_interval\_has}
+
+Parameters:
+
+\begin{itemize}
+	\item val (\texttt{NUMERIC})
+	\item iv (\texttt{INTERVAL})
+\end{itemize}
+
+Returns \texttt{INTEGER}.
+
+The unction returns 1 if the interval iv contains val, 0 otherwise. The
+lower limit is always included in iv, behaviour on the upper limit is
+column-specific.
+
 \appendix
+
+\section{Methodology to obtain this catalogue}
+
+A small script has been written to obtain the different UDF used
+throughout the registry. It is not perfect and should be subject of
+review and change.
+
+
+
 \section{Changes from Previous Versions}
 
 No previous versions yet.  
