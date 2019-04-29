@@ -242,6 +242,120 @@ The unction returns 1 if the interval iv contains val, 0 otherwise. The
 lower limit is always included in iv, behaviour on the upper limit is
 column-specific.
 
+
+\section{List of third-party user defined functions}
+
+In this section those functions deemed necessary but not
+\textit{official} or IVOA-sanctioned will be added. Currently, these
+entities are represented:
+
+\begin{itemize}
+	\item{GAVO}
+\end{itemize}
+
+\subsection{GAVO functions}
+
+\subsubsection{gavo\_simbadpoint}
+
+Parameters:
+
+\begin{itemize}
+	\item identifier (\texttt{TEXT})
+\end{itemize}
+
+Returns \texttt{POINT}.
+
+Queries Simbad for an identifier and returns the corresponding point.
+Note that identifier can only be a literal, i.e., as simple string
+rather than a column name. This is because the GAVO database cannot
+query Simbad, and probably wouldn't want to fire of millions of Simbad
+queries anyway; use Simbads's own TAP service for these kind of
+applications.
+
+\subsubsection{gavo\_to\_jd}
+
+Parameters:
+
+\begin{itemize}
+	\item d (\texttt{TIMESTAMP})
+\end{itemize}
+
+Returns \texttt{DOUBLE PRECISION}.
+
+Converts a postgres timestamp toi a modified julian date. This is naive;
+no corrections for timezones, let alone time scales or the like are done;
+you can thus not expect this to be good to second-precision unless you
+are careful in the construction of the timestamp.
+
+\subsubsection{gavo\_to\_mjd}
+
+Parameters:
+
+\begin{itemize}
+	\item d (\texttt{TIMESTAMP})
+\end{itemize}
+
+Returns \texttt{DOUBLE PRECISION}.
+
+Converts a postgres timestamp to julian date. This is naive; no
+corrections for timezones, let alone time scales or the like are done;
+you can thus not expect this to be good to second-precision unless you
+are careful in the construction of the timestamp.
+
+\subsubsection{gavo\_histogram}
+
+Parameters:
+
+\begin{itemize}
+	\item val (\texttt{REAL})
+	\item lower (\texttt{REAL})
+	\item upper (\texttt{REAL})
+	\item nbins (\texttt{INTEGER})
+\end{itemize}
+
+Returns: \texttt{INTEGER\[\]}
+
+The aggregate function returns a histogram of val with nbins+2 elements.
+Assuming 0-based arrays, results\[0\] contains the number of underflows
+(i.e., val<lower), result\[nbins+1\] the number of overflows. Elements
+i..nbins are the counts in nbins bins of width (upper-lower)/nbins.
+Clients will have to converts back to physical units using some external
+communication, there currently is no (meta-) data as lower and upper in
+the TAP response.
+
+\subsubsection{gavo\_transform}
+
+Parameters:
+
+\begin{itemize}
+	\item from\_sys (\texttt{TEXT})
+	\item to\_sys (\texttt{TEXT})
+	\item geo (\texttt{GEOMETRY})
+\end{itemize}
+
+Returns: \texttt{GEOMETRY}.
+
+Transforms ADQL geometries between various reference systems. GEO can be
+a \texttt{POINT}, a \texttt{CIRCLE}, or a \texttt{POLYGON}, and the
+function will return a geometry of the same type. In the current
+implementation, from\_sys and to\_sys must be literal string (i.e., they
+cannot be computed though expressions or be taked from database columns)
+
+\subsubsection{gavo\_ipix}
+
+Parameters:
+
+\begin{itemize}
+	\item long (\texttt{REAL})
+	\item lat (\texttt{REAL})
+\end{itemize}
+
+Returns: \texttt{BIGINT}.
+
+Returns the q3c ipix for a long/lat pair (it simply wraps the
+\texttt{13c\_angpix} function). Probably relevnt when playing tricks
+with indices of PPMXL ids.
+
 \appendix
 
 \section{Methodology to obtain this catalogue}
