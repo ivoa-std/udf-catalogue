@@ -19,10 +19,10 @@
 
 \begin{document}
 \begin{abstract}
-In these document the official IVOA sanctioned User Defined Functions
+In this document the official IVOA sanctioned User Defined Functions
 (UDF) are listed. The functions must be prefixed by ``ivo\_`` as
-defined in the standard. Should more be defined for future use, they
-will be written down in this note.
+defined in the standard. Should more be defined for future use, their
+specifications will be written down in this note.
 \end{abstract}
 
 
@@ -49,11 +49,11 @@ infrastructure that enable VO applications.
 
 After more than a decade since the foundation of the IVOA, multiple
 Virtual Observatories across the world have adapted its standards. In
-this case, TAP and its query language, ADQL. Due to some of the
-functionality not being present in the standards, IVOA defined some UDF
-which help users obtain HealPix maps for instance. Despite this, and due
-to different services working in different context, there is disparity
-on UDF.
+the present case, TAP and its query language, ADQL. Due to some of the
+functionality not being covered by ADQL, IVOA defined some User Defined
+Functions (UDF) which help users obtain HealPix maps for instance.
+Despite this, and due to different services working in different
+context, there is disparity on UDF.
 
 In this note we intend to compile those which can be service-independent
 but adoptable by anyone who deems it necessary.
@@ -361,9 +361,10 @@ with indices of PPMXL ids.
 
 \section{Methodology to obtain this catalogue}
 
-A small script has been written to obtain the different UDF used
-throughout the registry. It is not perfect and should be subject of
-review and change.
+A small script using PyVo has been written to obtain the different UDF
+used throughout the registry, as of the 2019 IVOA interop, it is not
+complete and should be subject of review and change by the appropiate
+people.
 
 \section{Changes from Previous Versions}
 
