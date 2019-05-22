@@ -433,6 +433,35 @@ Returns the q3c ipix \citep{soft:q3c} for a long/lat pair (it simply
 wraps the \texttt{13c\_angpix} function). This relates to a pixelisation
 scheme alternative to HEALPix.
 
+\appendix
+
+\section{Script used to obtain information shown here}
+
+A small primitive script using PyVO has been written in order to obtain
+the different UDF used throughout the Registry. This list has repeated
+results, which have been later filtered by other means.
+
+\begin{lstlisting}
+from xml.etree import ElementTree
+
+from pyvo.registry import search as regsearch
+from pyvo.dal import TAPService
+from pyvo.io.vosi.tapregext import TableAccess
+
+for svc_rec in regsearch(servicetype='tap'):
+    svc = TAPService(svc_rec.access_url)
+    try: 
+        for capability in svc.capabilities:
+            if 'TAP' in capability.standardid and isinstance(capability,
+                    TableAccess):
+                for language in capability.languages:
+                    for lfls in language.languagefeaturelists:
+                        for feature in lfl
+                            print feature.form
+                            print feature.description
+    except:
+        pass
+\end{lstlisting}
 
 \section{Changes from Previous Versions}
 
