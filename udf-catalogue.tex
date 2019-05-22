@@ -5,6 +5,19 @@
 \SVN$Date$
 \SVN$URL$
 
+
+\iftth
+\message{Define parameters env for tth (ask markus)}
+\ddt
+\else
+\newenvironment{parameters}%
+% this is *only* for use within a description environment
+  {\hfil % let definition label stand on a line of its own.
+    \begin{list}{$\bullet$}{\topsep=0pt\partopsep=0pt\parsep=0pt}
+    }%
+  {\end{list}}
+\fi
+
 \title{Catalogue of ADQL User Defined Functions}
 
 % see ivoatexDoc for what group names to use here
@@ -103,25 +116,27 @@ construction, is non-normative).
 In this section, order and npix are used as in the MOC recommendation
 \citep{2014ivoa.spec.0602F}.
 
-\subsubsection{\texttt{ivo\_healpix\_index} with ra and dec}
-
-Parameters:
-
-\begin{itemize}
-	\item hpxOrder (\texttt{INTEGER})
-	\item ra (\texttt{DOUBLE})
-	\item dec (\texttt{DOUBLE})
-\end{itemize}
-
-Returns: \texttt{BIGINT}
-
-Source: This document.
+\subsubsection{\texttt{ivo\_healpix\_index(hpxOrder, ra, dec)}}
 
 Returns the index (npix) of the Healpix cell containing the spherical
 point given by right ascension \texttt{ra} and declination \texttt{dec}
 at order \texttt{hpxOrder} in NESTED numbering.
 
-\subsubsection{\texttt{ivo\_healpix\_index} with an spherical point}
+\begin{description}
+\item[Parameters]
+
+\begin{parameters}
+	\item hpxOrder (\texttt{INTEGER})
+	\item ra (\texttt{DOUBLE})
+	\item dec (\texttt{DOUBLE})
+\end{parameters}
+
+\item[Return type] \texttt{BIGINT}
+
+\item[Source] This document.
+\end{description}
+
+\subsubsection{\texttt{ivo\_healpix\_index} with a spherical point}
 
 Parameters:
 
@@ -426,7 +441,7 @@ No previous versions yet.
 % Use itemize environments.
 
 
-\bibliography{ivoatex/ivoabib,ivoatex/docrepo}
+\bibliography{ivoatex/ivoabib,ivoatex/docrepo,local}
 
 
 \end{document}
