@@ -7,12 +7,15 @@
 
 
 \iftth
-\message{Define parameters env for tth (ask markus)}
-\ddt
+\newenvironment{args}%
+{\begin{html}<ul>\end{html}\def\arg##1(##2){\begin{html}<li><i>\end{html}%
+  ##1 \begin{html}</i>(<code>\end{html}##2\begin{html}) </code>\end{html}}}%
+{\begin{html}</ul>\end{html}}
 \else
-\newenvironment{parameters}%
+\newenvironment{args}%
 % this is *only* for use within a description environment
   {\hfil % let definition label stand on a line of its own.
+    \def\arg##1(##2){\item {\textit{##1} (\texttt{##2})}}
     \begin{list}{$\bullet$}{\topsep=0pt\partopsep=0pt\parsep=0pt}
     }%
   {\end{list}}
@@ -75,8 +78,11 @@ and defined interoperably, i.e., there should be an IVOA-wide consensus
 on their names and semantics. 
 
 This note documents this consensus where it has been reached within
-other standards, and reviews of this document are the preferred way to
-introduce new \verb|ivo_| UDFs.
+other standards.  Where UDFs are not naturally associated to a
+particular standard, they can be proposed by editing this document and
+starting the Endorsed Note process \citep{2017ivoa.spec.0517G} on the
+changes.  In effect, this endorsed note is the management tool for
+the \verb|ivo_| ``namespace'' in ADQL user defined functions.
 
 Note that no function given here is required to be present in a generic
 TAP service (though other standards may pose such requirements;
@@ -108,85 +114,85 @@ construction, is non-normative).
 %Fig.~\ref{fig:archdiag} shows the role this document plays within the
 %IVOA architecture \citep{note:VOARCH}.
 
-%???? and so on, LaTeX as you know and love it. ????
 
 \section{List of IVOA user defined functions}
+
+The functions are defined through a brief human-readable description of
+what the function does, followed by a closer discussion of the
+parameters, the return value, and the source of UDF.
+
+In the parameter definitions, we do not distinguish between different
+lengths of floating point arguments.  Where we write \texttt{REAL}, the
+expectation is that the functions accept floating point values of any
+length.
+
+
 \subsection{HEALPix-related}
 
 In this section, order and npix are used as in the MOC recommendation
 \citep{2014ivoa.spec.0602F}.
 
-\subsubsection{\texttt{ivo\_healpix\_index(hpxOrder, ra, dec)}}
+\subsubsection{ivo\_healpix\_index(hpxOrder, long, lat)}
 
 Returns the index (npix) of the Healpix cell containing the spherical
-point given by right ascension \texttt{ra} and declination \texttt{dec}
-at order \texttt{hpxOrder} in NESTED numbering.
+point given by longitude \texttt{long} (typically, RA) and latitude
+\texttt{lat} (typically, declination) at order \texttt{hpxOrder} in
+NESTED numbering.
 
 \begin{description}
 \item[Parameters]
-
-\begin{parameters}
-	\item hpxOrder (\texttt{INTEGER})
-	\item ra (\texttt{DOUBLE})
-	\item dec (\texttt{DOUBLE})
-\end{parameters}
+\begin{args}
+	\arg hpxOrder (INTEGER) -- the HEALPix order to use.
+	\arg ra (REAL) -- longitude of the spherical point to compute the
+	index for, in degrees.
+	\arg dec (REAL) -- latitude of the spherical point to compute the
+	index for, in degrees.
+\end{args}
 
 \item[Return type] \texttt{BIGINT}
 
 \item[Source] This document.
 \end{description}
 
-\subsubsection{\texttt{ivo\_healpix\_index} with a spherical point}
-
-Parameters:
-
-\begin{itemize}
-	\item hpxOrder (\texttt{INTEGER})
-	\item point (\texttt{POINT})
-\end{itemize}
-
-Returns: \texttt{BIGINT}
-
-Source: This document.
+\subsubsection{ivo\_healpix\_index(spoint)}
 
 Returns the index (npix) of the HEALPix cell containing the spherical
-point given by \texttt{point} at order \texttt{hpxOrder} in NESTED
+point given by \texttt{spoint} at order \texttt{hpxOrder} in NESTED
 numbering.
 
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg hpxOrder (INTEGER) -- the HEALPix order to use.
+	\arg spoint (POINT) -- the position to compute the index for.
+\end{args}
 
-\subsubsection{ivo\_healpix\_center}
+\item[Return type] \texttt{BIGINT}
 
-Parameters:
+\item[Source] This document.
+\end{description}
 
-\begin{itemize}
-	\item hpxOrder (\texttt{INTEGER})
-	\item hpxIndex (\texttt{INTEGER})
-\end{itemize}
+\subsubsection{ivo\_healpix\_center(hpxOrder, hpxIndex)}
 
-Returns: \texttt{POINT}
-
-Source: This document
-
-Returns a \texttt{POINT} corresponding to the center of the HEALPix cell
+Returns a POINT corresponding to the center of the HEALPix cell
 with index (npix) \texttt{hpxIndex} at order \texttt{hpxOrder}.
 
-\subsubsection{\texttt{ivo\_apply\_pm}}
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg hpxOrder (INTEGER) -- the HEALPix order to use.
+	\arg hpxIndex (INTEGER) -- the index for which to return the center
+	position.
+\end{args}
 
-Parameters:
+\item[Return type] \texttt{POINT}
 
-\begin{itemize}
-	\item ra (\texttt{DOUBLE})
-	\item dec (\texttt{DOUBLE})
-	\item pmra (\texttt{DOUBLE})
-	\item pmdec (\texttt{DOUBLE})
-	\item epochDist (\texttt{DOUBLE})
-\end{itemize}
+\item[Source] This document.
+\end{description}
 
-Returns: \texttt{POINT}.
+\subsubsection{ivo\_apply\_pm(ra, dec, pmra, pmdec, epochDist)}
 
-Source: This document
-
-Returns a \texttt{POINT} for the position an object at \texttt{ra},
+Returns a POINT for the position an object at \texttt{ra},
 \texttt{dec} will be at after \texttt{epochDist} Julian years if its proper
 motion is \texttt{prma}, \texttt{pmdec}.  Positions must be in degrees,
 proper motions are expected in degrees/year. The proper motions must be
@@ -198,73 +204,94 @@ motions.  However, you cannot, of course, mix galactic coordinates with
 equatorial proper motions.
 
 
+\begin{description}
+\item[Parameters]
+
+\begin{args}
+	\arg ra (REAL) -- longitude of the spherical position, in degrees.
+	\arg dec (REAL) -- latitude of the spherical position, in degrees.
+	\arg pmra (REAL) -- proper motion in longitude in the
+	tangential plane (i.e., the simple derivative has been divided by
+	cos(dec)), in degrees per Julian year.
+	\arg pmdec (REAL) -- proper motion in latitude, in degrees per Julian
+	year.
+	\arg epochDist (REAL) -- propagate the object this many Julian years.
+\end{args}
+
+\item[Return type] \texttt{POINT}
+
+\item[Source] This document.
+\end{description}
+
+
 \subsection{Text related}
 
-\subsubsection{ivo\_string\_agg}
-
-Parameters:
-
-\begin{itemize}
-	\item expression (\texttt{TEXT})
-	\item delimiter (\texttt{TEXT})
-\end{itemize}
-
-Returns: \texttt{TEXT}
-
-Source: RegTAP \citep{2014ivoa.spec.1208D}
+\subsubsection{ivo\_string\_agg(expression, delimiter)}
 
 An aggregate function returning all values of \texttt{expression} 
 concatenated with delimiter.
 
-\subsubsection{ivo\_nocasematch}
+\begin{description}
+\item[Parameters]
 
-Parameters:
+\begin{args}
+	\arg expression (TEXT) -- a SQL expression giving the strings to
+	concatenate.  The expression may be NULL, in which case the row does
+	not leave a trace in the result string.
+	\arg delimiter (TEXT) -- a string used to concatenate the values of
+	\texttt{expression} in each group.
+\end{args}
 
-\begin{itemize}
-	\item value (\texttt{TEXT})
-	\item pattern (\texttt{TEXT})
-\end{itemize}
+\item[Return type] \texttt{TEXT}
 
-Returns: \texttt{INTEGER}
+\item[Source] RegTAP \citep{2014ivoa.spec.1208D}
+\end{description}
 
-Source: RegTAP \citep{2014ivoa.spec.1208D}
+\subsubsection{ivo\_nocasematch(value, pattern)}
 
-Pattern is defined as for the SQL LIKE operator, but the match is
-performed case-insensitively. This function in effect provides a
-surrogate for the ILIKE SQL operator that is missing from ADQL. Returns
-1 if pattern matches, 0 otherwise.
+Evaluates \verb value ILIKE pattern, i.e.,
+pattern is defined as for the SQL LIKE operator, but the match is
+performed case-insensitively.  Returns
+1 if the pattern matches, 0 otherwise.
 
 In ADQL 2.1 and later, use the ILIKE operator instead.
 
-\subsubsection{ivo\_hasword}
+\begin{description}
+\item[Parameters]
 
-Parameters:
+\begin{args}
+	\arg value (TEXT) -- a string-valued SQL expression.
+	\arg pattern (TEXT) -- a SQL pattern for LIKE evaluation (i.e.,
+	underscore is any character, percent zero or more arbitrary
+	characters).
+\end{args}
 
-\begin{itemize}
-	\item haystack (\texttt{TEXT})
-	\item needle (\texttt{TEXT})
-\end{itemize}
+\item[Return type] \texttt{INTEGER}
 
-Returns: \texttt{INTEGER}.
+\item[Source] RegTAP \citep{2014ivoa.spec.1208D}
+\end{description}
 
-Source: RegTAP \citep{2014ivoa.spec.1208D}
+\subsubsection{ivo\_hasword(haystack, needle)}
 
 Returns 1 if the string \texttt{needle} is contained (in some sense) in
 the string \texttt{haystack}, 0 otherwise.  This is intended to support
 somewhat ``Google-like'', soft string matches.
 
-\subsubsection{ivo\_hashlist\_has}
+\begin{description}
+\item[Parameters]
 
-Parameters:
+\begin{args}
+	\arg haystack (TEXT) -- text to match \texttt{needle} in.
+	\arg needle (TEXT) -- a string to locate in \texttt{haystack}.
+\end{args}
 
-\begin{itemize}
-	\item hashlist (\texttt{TEXT})
-	\item item (\texttt{TEXT})
-\end{itemize}
+\item[Return type] \texttt{INTEGER.}
 
-Returns: \texttt{INTEGER}
+\item[Source] RegTAP \citep{2014ivoa.spec.1208D}
+\end{description}
 
-Source: RegTAP \citep{2014ivoa.spec.1208D}
+
+\subsubsection{ivo\_hashlist\_has(hashlist, item)}
 
 The \texttt{hashlist} argument is a list of words not containing the hash
 sign (\#), concatenated by hash signs; the \texttt{item} argument is
@@ -274,20 +301,23 @@ the second argument is in the list of words encoded in the first argument.
 The behaviour in case the second argument contains a hash sign is
 unspecified.
 
+\begin{description}
+\item[Parameters]
+
+\begin{args}
+	\arg hashlist (TEXT) -- a string containing hash-separated terms.
+	\arg item (TEXT) -- a string containing a single term not containing a
+	hash.
+\end{args}
+
+\item[Return type] \texttt{INTEGER}
+
+\item[Source] RegTAP \citep{2014ivoa.spec.1208D}
+\end{description}
+
 \subsection{Interval Arithmetic}
 
-\subsubsection{ivo\_interval\_overlaps}
-
-Parameters:
-
-\begin{itemize}
-	\item l1 (\texttt{NUMERIC})
-	\item h1 (\texttt{NUMERIC})
-	\item l2 (\texttt{NUMERIC})
-	\item h2 (\texttt{NUMERIC})
-\end{itemize}
-
-Returns \texttt{INTEGER}.
+\subsubsection{ivo\_interval\_overlaps(h1, h1, l2, h2)}
 
 The function returns 1 if the interval $[l1\ldots h1]$ overlaps with the
 interval $[l2\ldots h2]$. For the purposes of this function, the case
@@ -295,19 +325,44 @@ $l1=h2$ or
 $l2=h1$ is treated as overlap. The function returns 0 for non-overlapping
 intervals.
 
-\subsubsection{ivo\_interval\_has}
+\begin{description}
+\item[Parameters]
 
-Parameters:
+\begin{args}
+	\arg l1 (NUMERIC) -- the lower bound of the first interval.
+	\arg h1 (NUMERIC) -- the upper bound of the first interval.
+	\arg l2 (NUMERIC) -- the lower bound of the second interval.
+	\arg h2 (NUMERIC) -- the upper bound of the second interval.
+\end{args}
 
-\begin{itemize}
-	\item val (\texttt{NUMERIC})
-	\item iv (\texttt{INTERVAL})
-\end{itemize}
+\item[Return type] \texttt{INTEGER}
 
-Returns \texttt{INTEGER}.
+\item[Source] Originally proposed by the roadmap for STC discovery
+\citep{note:regstc}; standardised in this document.
+\end{description}
+
+\subsubsection{ivo\_interval\_has(val, iv)}
 
 The function returns 1 if the interval \texttt{iv} contains val, 0
 otherwise. Both  limits are always included in \texttt{iv}.
+
+\begin{description}
+\item[Parameters]
+
+\begin{args}
+	\arg val (NUMERIC) -- a value to test for interval membership.
+	\arg iv (INTERVAL) -- the interval to test against.  There are no
+	guarantees that whatever is put here can be a part of a select list or
+	that any other operation is possible on it (i.e., the implementation
+	of the UDF does not mean that some sort of interval is available as a
+	type in the underlying database engine).
+\end{args}
+
+\item[Return type] \texttt{INTEGER}
+
+\item[Source] Originally proposed by the roadmap for STC discovery
+\citep{note:regstc}; standardised in this document.
+\end{description}
 
 
 \appendix
@@ -330,65 +385,61 @@ We list the UDFs by prefix.
 
 \subsection{UDFs prefixed gavo\_}
 
-\subsubsection{gavo\_simbadpoint}
-
-Parameters:
-
-\begin{itemize}
-	\item identifier (\texttt{TEXT})
-\end{itemize}
-
-Returns \texttt{POINT}.
+\subsubsection{gavo\_simbadpoint(identifier)}
 
 Queries Simbad for an identifier and returns the corresponding point.
 Note that identifier can only be a literal, i.e., as simple string
 rather than a column name.  Queries requiring a column reference in the
 argument should probably use Simbad's TAP service in a separate query.
+The query fails if Simbad cannot resolve the identifier.
 
-\subsubsection{gavo\_to\_jd}
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg identifier (TEXT) -- a string containing an identifier Simbad can
+	resolve.
+\end{args}
 
-Parameters:
+\item[Return type] \texttt{POINT}
+\end{description}
 
-\begin{itemize}
-	\item d (\texttt{TIMESTAMP})
-\end{itemize}
+\subsubsection{gavo\_to\_jd(d)}
 
-Returns \texttt{DOUBLE PRECISION}.
-
-Converts a postgres timestamp to a julian date. This is naive;
+Converts a postgres timestamp to a Julian date. This is naive;
 no corrections for timezones, let alone time scales or reference
 positions are applied.  This will, therefore, only reach precisions
 below the level of a few minutes if the timestamps have compatible time
 metadata.
 
-\subsubsection{gavo\_to\_mjd}
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg d (\texttt{TIMESTAMP}) -- the SQL timestamp to convert.
+\end{args}
 
-Parameters:
+\item[Return type] \texttt{REAL}
+\end{description}
 
-\begin{itemize}
-	\item d (\texttt{TIMESTAMP})
-\end{itemize}
 
-Returns \texttt{DOUBLE PRECISION}.
+\subsubsection{gavo\_to\_mjd(d)}
 
-Converts a postgres timestamp to modified julian date. This is naive; 
+Converts a postgres timestamp to modified Julian date. This is naive; 
 no corrections for timezones, let alone time scales or reference
 positions are applied.  This will, therefore, only reach precisions
 below the level of a few minutes if the timestamps have compatible time
 metadata.
 
-\subsubsection{gavo\_histogram}
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg d (\texttt{TIMESTAMP}) -- the SQL timestamp to convert.
+\end{args}
 
-Parameters:
+\item[Return type] \texttt{REAL}
+\end{description}
 
-\begin{itemize}
-	\item val (\texttt{REAL})
-	\item lower (\texttt{REAL})
-	\item upper (\texttt{REAL})
-	\item nbins (\texttt{INTEGER})
-\end{itemize}
 
-Returns: \texttt{INTEGER\[\]}
+\subsubsection{gavo\_histogram(val, lower, upper, nbins)}
 
 This aggregate function returns a histogram of val with
 $\texttt{nbins}+2$ elements.  Assuming 0-based arrays, \verb|results[0]|
@@ -399,39 +450,61 @@ $(\texttt{upper}-\texttt{lower})/\texttt{nbins}$.  Clients will have to
 convert back to physical units using some external communication, there
 currently is no (meta-) data as lower and upper in the TAP response.
 
-\subsubsection{gavo\_transform}
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg val (REAL) -- the value to bin.
+	\arg lower (REAL) -- the lower limit of the histogram (anything
+	smaller will end up in bin 0).
+	\arg upper (REAL) -- the upper limit of the histogram (anything larger
+	will end up in bin nbins+1).
+	\arg nbins (INTEGER) -- the number of ``natural'' bins in the
+	histogram.  The returned array will have to additional cells for
+	under- and overflows.
+\end{args}
 
-Parameters:
+\item[Return type] \texttt{INTEGER[]}
+\end{description}
 
-\begin{itemize}
-	\item from\_sys (\texttt{TEXT})
-	\item to\_sys (\texttt{TEXT})
-	\item geo (\texttt{GEOMETRY})
-\end{itemize}
 
-Returns: a geometry of the type of the \texttt{geo} argument.
+\subsubsection{gavo\_transform(from\_sys, to\_sys, geo)}
 
 Transforms ADQL geometries between various reference systems.
-\texttt{GEO} can be a \texttt{POINT}, a \texttt{CIRCLE}, or a
+\texttt{GEO} can be a POINT, a \texttt{CIRCLE}, or a
 \texttt{POLYGON}, and the function will return a geometry of the same
 type. In the current implementation, \texttt{from\_sys} and
 \texttt{to\_sys} must be literal strings (i.e., they cannot be computed
 though expressions or be taken from database columns).
 
-\subsubsection{gavo\_ipix}
+\begin{description}
+\item[Parameters]
 
-Parameters:
+\begin{args}
+	\arg from\_sys (TEXT) -- name of the source reference system (there is no
+	defined way to obtain a list of supported reference systems).
+	\arg to\_sys (TEXT) -- name of the target reference system.
+	\arg geo (GEOMETRY) -- an ADQL geometry (POINT, CIRCLE, POLYGON).
+\end{args}
 
-\begin{itemize}
-	\item long (\texttt{REAL})
-	\item lat (\texttt{REAL})
-\end{itemize}
+\item[Return type] a geometry of the type of the \texttt{geo} argument.
+\end{description}
 
-Returns: \texttt{BIGINT}.
+
+\subsubsection{gavo\_ipix(long, lat)}
 
 Returns the q3c ipix \citep{soft:q3c} for a long/lat pair (it simply
 wraps the \texttt{13c\_angpix} function). This relates to a pixelisation
 scheme alternative to HEALPix.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg long (REAL) -- the longitude to compute the ipix for.
+	\arg lat (REAL) -- the latitude to compute the ipix for.
+\end{args}
+
+\item[Return type] \texttt{BIGINT}
+\end{description}
 
 \appendix
 
