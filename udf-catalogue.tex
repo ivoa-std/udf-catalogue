@@ -511,29 +511,37 @@ scheme alternative to HEALPix.
 \section{Script used to obtain information shown here}
 
 A small primitive script using PyVO has been written in order to obtain
-the different UDF used throughout the Registry. This list has repeated
-results, which have been later filtered by other means.
+the different UDF used throughout the Registry. The repeated items are
+purged and have been printed in JSON. Other formats like YAML, CSV, or .
 
 \begin{lstlisting}
 from xml.etree import ElementTree
+import json
 
 from pyvo.registry import search as regsearch
 from pyvo.dal import TAPService
 from pyvo.io.vosi.tapregext import TableAccess
 
-for svc_rec in regsearch(servicetype='tap'):
-    svc = TAPService(svc_rec.access_url)
+udflist = []
+
+for service_record in regsearch(servicetype='tap'):
+    sservice = TAPService(svc_rec.access_url)
     try: 
         for capability in svc.capabilities:
             if 'TAP' in capability.standardid and isinstance(capability,
                     TableAccess):
                 for language in capability.languages:
-                    for lfls in language.languagefeaturelists:
-                        for feature in lfl
-                            print feature.form
-                            print feature.description
+                    for langfeatlist in language.languagefeaturelists:
+                        for feature in langfeatlist:
+                            udflist.append({'name': feature.form,
+                             'description': feature.description})
     except:
         pass
+
+udflist = list({value['name']:value for value in udflist}.values())
+
+#This prints a JSON output
+print(json.dumps(udflist, indent = 4))
 \end{lstlisting}
 
 \section{Changes from Previous Versions}
