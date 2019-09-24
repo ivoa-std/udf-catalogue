@@ -525,9 +525,9 @@ from pyvo.io.vosi.tapregext import TableAccess
 udflist = []
 
 for service_record in regsearch(servicetype='tap'):
-    sservice = TAPService(svc_rec.access_url)
+    service = TAPService(service_record.access_url)
     try: 
-        for capability in svc.capabilities:
+        for capability in service.capabilities:
             if 'TAP' in capability.standardid and isinstance(capability,
                     TableAccess):
                 for language in capability.languages:
