@@ -7,7 +7,7 @@ DOCNAME = udf-catalogue
 DOCVERSION = 1.0
 
 # Publication date, ISO format; update manually for "releases"
-DOCDATE = 2019-04-12
+DOCDATE = 2019-09-25
 
 # What is it you're writing: NOTE, WD, PR, REC, PEN, or EN
 DOCTYPE = PEN
