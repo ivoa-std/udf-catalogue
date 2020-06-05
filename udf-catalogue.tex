@@ -63,8 +63,8 @@ infrastructure that enable VO applications.
 
 \section{Introduction}
 
-The Astronomical Data Query Language ADQL \citep{2008ivoa.spec.1030O}
-has the notion of user defined fucntions (UDF).  These provide a
+The Astronomical Data Query Language (ADQL) \citep{2008ivoa.spec.1030O}
+has the notion of user defined functions (UDF).  These provide a
 light-weight extension mechanism for operators of TAP services.  
 For instance, \citet{2016arXiv161109190T} shows how they enable the
 construction of HEALPix maps although ADQL~2.0 itself entirely lacks
@@ -122,30 +122,31 @@ what the function does, followed by a closer discussion of the
 parameters, the return value, and the source of UDF.
 
 In the parameter definitions, we do not distinguish between different
-lengths of floating point arguments.  Where we write \texttt{REAL}, the
+precisions of floating point arguments.  Where we write \texttt{REAL}, the
 expectation is that the functions accept floating point values of any
 length.
 
 
 \subsection{HEALPix-related}
 
-In this section, order and npix are used as in the MOC recommendation
+In this section, order and npix are used as in the Multi-Order
+Coverage map (MOC) recommendation
 \citep{2014ivoa.spec.0602F}.
 
 \subsubsection{ivo\_healpix\_index(hpxOrder, long, lat)}
 
-Returns the index (npix) of the Healpix cell containing the spherical
-point given by longitude \texttt{long} (typically, RA) and latitude
-\texttt{lat} (typically, declination) at order \texttt{hpxOrder} in
-NESTED numbering.
+Returns the index (npix) of the HEALPix cell containing the spherical
+point given by longitude \texttt{long} (typically, right ascension) and
+latitude \texttt{lat} (typically, declination) at order
+\texttt{hpxOrder} in NESTED numbering.
 
 \begin{description}
 \item[Parameters]
 \begin{args}
 	\arg hpxOrder (INTEGER) -- the HEALPix order to use.
-	\arg ra (REAL) -- longitude of the spherical point to compute the
+	\arg long (REAL) -- longitude of the spherical point to compute the
 	index for, in degrees.
-	\arg dec (REAL) -- latitude of the spherical point to compute the
+	\arg lat (REAL) -- latitude of the spherical point to compute the
 	index for, in degrees.
 \end{args}
 
@@ -154,17 +155,17 @@ NESTED numbering.
 \item[Source] This document.
 \end{description}
 
-\subsubsection{ivo\_healpix\_index(spoint)}
+\subsubsection{ivo\_healpix\_index(hpxOrder, point)}
 
 Returns the index (npix) of the HEALPix cell containing the spherical
-point given by \texttt{spoint} at order \texttt{hpxOrder} in NESTED
+point given by \texttt{point} at order \texttt{hpxOrder} in NESTED
 numbering.
 
 \begin{description}
 \item[Parameters]
 \begin{args}
 	\arg hpxOrder (INTEGER) -- the HEALPix order to use.
-	\arg spoint (POINT) -- the position to compute the index for.
+	\arg point (POINT) -- the position to compute the index for.
 \end{args}
 
 \item[Return type] \texttt{BIGINT}
@@ -196,7 +197,8 @@ Returns a POINT for the position an object at \texttt{ra},
 \texttt{dec} will be at after \texttt{epochDist} Julian years if its proper
 motion is \texttt{prma}, \texttt{pmdec}.  Positions must be in degrees,
 proper motions are expected in degrees/year. The proper motions must be
-given in the tangential plane (,,contain $cos(\delta)$'').
+given in the tangential plane (i.e., the simple derivative has been
+divided by $cos(\delta)$'').
 
 Note that this is an operation of spherical geometry, i.e., the function
 would work as well with non-equatorial coordinates \emph{and} proper
@@ -229,7 +231,7 @@ equatorial proper motions.
 \subsubsection{ivo\_string\_agg(expression, delimiter)}
 
 An aggregate function returning all values of \texttt{expression} 
-concatenated with delimiter.
+concatenated with \texttt{delimiter}.
 
 \begin{description}
 \item[Parameters]
@@ -249,12 +251,13 @@ concatenated with delimiter.
 
 \subsubsection{ivo\_nocasematch(value, pattern)}
 
-Evaluates \verb value ILIKE pattern, i.e.,
+Evaluates \texttt{value ILIKE <pattern>} pattern, i.e.,
 pattern is defined as for the SQL LIKE operator, but the match is
 performed case-insensitively.  Returns
 1 if the pattern matches, 0 otherwise.
 
-In ADQL 2.1 and later, use the ILIKE operator instead.
+Please note that in ADQL versions higher than ADQL 2.1, the ILIKE
+operator should be used instead.
 
 \begin{description}
 \item[Parameters]
@@ -317,22 +320,22 @@ unspecified.
 
 \subsection{Interval Arithmetic}
 
-\subsubsection{ivo\_interval\_overlaps(h1, h1, l2, h2)}
+\subsubsection{ivo\_interval\_overlaps(a1, b1, a2, b2)}
 
-The function returns 1 if the interval $[l1\ldots h1]$ overlaps with the
-interval $[l2\ldots h2]$. For the purposes of this function, the case
-$l1=h2$ or
-$l2=h1$ is treated as overlap. The function returns 0 for non-overlapping
+The function returns 1 if the interval $[a1\ldots b1]$ overlaps with the
+interval $[a2\ldots b2]$. For the purposes of this function, the case
+$a1=b2$ or
+$a2=b1$ is treated as overlap. The function returns 0 for non-overlapping
 intervals.
 
 \begin{description}
 \item[Parameters]
 
 \begin{args}
-	\arg l1 (NUMERIC) -- the lower bound of the first interval.
-	\arg h1 (NUMERIC) -- the upper bound of the first interval.
-	\arg l2 (NUMERIC) -- the lower bound of the second interval.
-	\arg h2 (NUMERIC) -- the upper bound of the second interval.
+	\arg a1 (NUMERIC) -- the lower bound of the first interval.
+	\arg b1 (NUMERIC) -- the upper bound of the first interval.
+	\arg a2 (NUMERIC) -- the lower bound of the second interval.
+	\arg b2 (NUMERIC) -- the upper bound of the second interval.
 \end{args}
 
 \item[Return type] \texttt{INTEGER}
@@ -341,17 +344,18 @@ intervals.
 \citep{note:regstc}; standardised in this document.
 \end{description}
 
-\subsubsection{ivo\_interval\_has(val, iv)}
+\subsubsection{ivo\_interval\_has(value, interval)}
 
-The function returns 1 if the interval \texttt{iv} contains val, 0
-otherwise. Both  limits are always included in \texttt{iv}.
+The function returns 1 if the interval \texttt{interval} contains
+\texttt{val}, 0 otherwise. Both limits are always included in
+\texttt{interval}.
 
 \begin{description}
 \item[Parameters]
 
 \begin{args}
-	\arg val (NUMERIC) -- a value to test for interval membership.
-	\arg iv (INTERVAL) -- the interval to test against.  There are no
+	\arg value (NUMERIC) -- a value to test for interval membership.
+	\arg interval (INTERVAL) -- the interval to test against.  There are no
 	guarantees that whatever is put here can be a part of a select list or
 	that any other operation is possible on it (i.e., the implementation
 	of the UDF does not mean that some sort of interval is available as a
@@ -363,7 +367,6 @@ otherwise. Both  limits are always included in \texttt{iv}.
 \item[Source] Originally proposed by the roadmap for STC discovery
 \citep{note:regstc}; standardised in this document.
 \end{description}
-
 
 \appendix
 
@@ -379,7 +382,7 @@ page).
 The main purpose of this list is so implementors of similar
 functionality do not inadvertantly create needlessly incompatible
 signatures.  UDFs implemented under more than one prefix should probably
-be normed to become \verb|ivo_|-prefixed UDFs.
+be considered to become \verb|ivo_|-prefixed UDFs.
 
 We list the UDFs by prefix.
 
@@ -388,7 +391,7 @@ We list the UDFs by prefix.
 \subsubsection{gavo\_simbadpoint(identifier)}
 
 Queries Simbad for an identifier and returns the corresponding point.
-Note that identifier can only be a literal, i.e., as simple string
+Note that identifier can only be a literal, i.e., a simple string
 rather than a column name.  Queries requiring a column reference in the
 argument should probably use Simbad's TAP service in a separate query.
 The query fails if Simbad cannot resolve the identifier.
@@ -506,7 +509,22 @@ scheme alternative to HEALPix.
 \item[Return type] \texttt{BIGINT}
 \end{description}
 
-\appendix
+\subsubsection{gavo\_normal\_random(mu, sigma)}
+
+Returns a random number drawn from a normal distribution. Right now, the
+gaussian is approximated by summing up and scaling ten calls to random.
+For that very reason it is not precise or fast. Were to probe
+inadequate, a better implementation will be provided in the future.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg mu (REAL) -- the mean of the normal distribution.
+	\arg sigma (REAL) -- the width of the normal distribution..
+\end{args}
+
+\item[Return type] \texttt{REAL}
+\end{description}
 
 \section{Script used to obtain information shown here}
 
@@ -553,6 +571,5 @@ No previous versions yet.
 
 
 \bibliography{ivoatex/ivoabib,ivoatex/docrepo,local}
-
 
 \end{document}
