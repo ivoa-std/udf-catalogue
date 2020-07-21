@@ -1,0 +1,95 @@
+[For the following function, we have to think hard whether going through
+the tangential plane is what we'd like to do; it should go in with
+a bunch of other astrometric functions]
+
+\subsubsection{ivo\_apply\_pm(long, lat, pmlong, pmlat, epochDist)}
+
+Returns a POINT for the position an object at \texttt{ra},
+\texttt{dec} will be at after \texttt{epochDist} Julian years if its proper
+motion is \texttt{prma}, \texttt{pmdec}.  Positions must be in degrees,
+proper motions are expected in degrees/year. The proper motions must be
+given in the tangential plane (i.e., the simple derivative has been
+``divided by $cos(\delta)$'').
+
+Note that this is an operation of spherical geometry, i.e., the function
+would work as well with non-equatorial coordinates \emph{and} proper
+motions.  However, you cannot, of course, mix galactic coordinates with
+equatorial proper motions.
+
+\begin{description}
+\item[Parameters]
+
+\begin{args}
+	\arg long (REAL) -- longitude of the spherical position, in degrees.
+	\arg lat (REAL) -- latitude of the spherical position, in degrees.
+	\arg pmlong (REAL) -- proper motion in longitude in the
+	tangential plane (i.e., the simple derivative has been divided by
+	cos(lat)), in degrees per time unit.
+	\arg pmlat (REAL) -- proper motion in latitude, in degrees per time
+	unit.
+	\arg epochDist (REAL) -- propagate the object this many time units.
+\end{args}
+
+\item[Return type] \texttt{POINT}
+
+\item[Source] This document.
+\end{description}
+
+\begin{examples}
+\example \verb|ivo_apply_pm(30, 15, 0, 0.1, 20)|
+\becomes \verb|[30, 16.9991882802]|
+\done as a 2-array with \xmlel{xtype}=\emph{point}; note that the
+latitude here is not 17 because of the gnomonic projection.
+
+\example \verb|ivo_apply_pm(30, 60, 0.1, 0, 20)|
+\becomes \verb|[33.993520433, 59.93965025567]|
+\done as a 2-array with \xmlel{xtype}=\emph{point}; note that the motion
+along the longitude is a lot longer than time times proper motion
+because of latitude effects.
+\end{examples}
+
+Note that this is a minimal, restricted form of ``applying proper
+motions''.  A full, physically valid treatment requires an object's
+distance and radial velocity to reconstruct the actual space motion.
+Later versions of this specification may include extensions to this
+function supporting this.
+
+The five-parameter function discussed here should be implemented using
+calculations in the tangential plane; the result of the function should
+be $$G\big((\mu_l, \mu_b), (l, b)\big),$$ where $G(\vec d, \vec p)$ is the
+gnomonic projection of the tangential plane coordinate $\vec d$ and the
+tangent point $\vec b$, $l$ and $b$ are \verb|long| and \verb|lat|,
+repectively, and $\mu_l$ and $\mu_b$ are \verb|pmlong| and \verb|pmlat|,
+respectively.
+
+
+
+
+[This function may be a good idea in a world with interval-valued
+columns; as long as we don't have many of those, it's probably
+dispensable]
+
+\subsubsection{ivo\_interval\_has(value, interval)}
+
+The function returns 1 if the interval \texttt{interval} contains
+\texttt{val}, 0 otherwise. Both limits are always included in
+\texttt{interval}.
+
+\begin{description}
+\item[Parameters]
+
+\begin{args}
+	\arg value (NUMERIC) -- a value to test for interval membership.
+	\arg interval (INTERVAL) -- the interval to test against.  There are no
+	guarantees that whatever is put here can be a part of a select list or
+	that any other operation is possible on it (i.e., the implementation
+	of the UDF does not mean that some sort of interval is available as a
+	type in the underlying database engine).
+\end{args}
+
+\item[Return type] \texttt{INTEGER}
+
+\item[Source] Originally proposed by the roadmap for STC discovery
+\citep{note:regstc}; standardised in this document.
+\end{description}
+

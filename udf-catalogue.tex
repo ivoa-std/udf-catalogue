@@ -1,16 +1,27 @@
 \documentclass[11pt,a4paper]{ivoa}
 \input tthdefs
 
-\SVN$Rev$
-\SVN$Date$
-\SVN$URL$
+\SVN$Rev: 5852 $
+\SVN$Date: 2020-07-21 13:11:45 +0200 (ar., 21 uzt 2020) $
+\SVN$URL: https://volute.g-vo.org/svn/trunk/projects/dal/udf-catalogue/udf-catalogue.tex $
 
-
+\usepackage{xifthen}
+\lstloadlanguages{XML,SQL}
+\lstset{flexiblecolumns=true,basicstyle=\ttfamily}
+ 
 \iftth
 \newenvironment{args}%
 {\begin{html}<ul>\end{html}\def\arg##1(##2){\begin{html}<li><i>\end{html}%
   ##1 \begin{html}</i>(<code>\end{html}##2\begin{html}) </code>\end{html}}}%
 {\begin{html}</ul>\end{html}}
+
+\newenvironment{examples}%
+{\begin{html}<ul>\end{html}%
+  \def\example{\begin{html}<li><code>\end{html}}%
+  \def\becomes{ returns }%
+  \def\done##1.{\begin{html})</code>\end{html} ##1\begin{html}</li>\end{html}}}%
+{\begin{html}</ul>\end{html}}
+
 \else
 \newenvironment{args}%
 % this is *only* for use within a description environment
@@ -19,7 +30,20 @@
     \begin{list}{$\bullet$}{\topsep=0pt\partopsep=0pt\parsep=0pt}
     }%
   {\end{list}}
+
+\newenvironment{examples}%
+  {\par\bigbreak
+    \noindent\textbf{Examples} (non-normative)\nobreak\par
+    \nobreak\vskip 3pt plus 1pt
+    \def\example{\par\noindent}%
+    \def\becomes{\hfil\break\strut\qquad$\to$ }%
+    \def\done##1.{\ifthenelse{\isempty{##1}}{\par}{%
+        \hfil\break{\footnotesize\fontshape{it}\selectfont
+        ##1.\par}}\vskip 2pt plus 2pt}}%
+  {\relax}
+
 \fi
+
 
 \title{Catalogue of ADQL User Defined Functions}
 
@@ -77,8 +101,10 @@ defined functions with names starting with \verb|ivo_| are to be used
 and defined interoperably, i.e., there should be an IVOA-wide consensus
 on their names and semantics. 
 
-This note documents this consensus where it has been reached within
-other standards.  Where UDFs are not naturally associated to a
+In version 1.0, this note documented this consensus where it has been
+reached within other standards or in the review of this document.  
+
+In the future, where UDFs are not naturally associated with a
 particular standard, they can be proposed by editing this document and
 starting the Endorsed Note process \citep{2017ivoa.spec.0517G} on the
 changes.  In effect, this endorsed note is the management tool for
@@ -86,14 +112,14 @@ the \verb|ivo_| ``namespace'' in ADQL user defined functions.
 
 Note that no function given here is required to be present in a generic
 TAP service (though other standards may pose such requirements;
-\verb|ivo_hashlist_has|, for instance, is, or will be, required by both
+\verb|ivo_hashlist_has|, for instance, is required by both
 RegTAP and EPN-TAP).  However, if a service implements any UDF with a
-name starting with \verb|ivo_|, its semantics must be as specified here.
+name mentioned in this document, its semantics must be as specified here.
 
 Informationally, in each revision of this document, we also run an
-all-VO survey of user defined functions in registered TAP services.  The
-result of this survey is available as an appendix (which, by
-construction, is non-normative).
+all-VO survey of user defined functions in registered TAP services.  A
+digest of this survey is given in the non-normative
+Appendix~\ref{app:otherudfs}.
 
 %\subsection{Role within the VO Architecture}
 
@@ -119,12 +145,25 @@ construction, is non-normative).
 
 The functions are defined through a brief human-readable description of
 what the function does, followed by a closer discussion of the
-parameters, the return value, and the source of UDF.
+parameters, the return value, and the authority the UDF was drawn from.
 
 In the parameter definitions, we do not distinguish between different
 precisions of floating point arguments.  Where we write \texttt{REAL}, the
 expectation is that the functions accept floating point values of any
 length.
+
+Most functions are accompanied by examples, which are intended to make
+the the effects of the functions clearer and give implementors a
+starting point for tests.  Where examples disagree with the
+specification text, the text is normative.
+
+While ADQL does not support standalone evaluation of functions, a query
+like 
+\begin{lstlisting}[language=SQL]
+  SELECT TOP 1 <example> AS res FROM TAP_SCHEMA.tables
+\end{lstlisting}
+will return one row with the function result for simple, non-aggregate
+functions.
 
 
 \subsection{HEALPix-related}
@@ -155,6 +194,20 @@ latitude \texttt{lat} (typically, declination) at order
 \item[Source] This document.
 \end{description}
 
+\begin{examples}
+\example \verb|ivo_healpix_index(0, 1, 1)|
+\becomes \verb|4|
+\done.
+
+\example \verb|ivo_healpix_index(17, 1, 1)|
+\becomes \verb|81609757711|
+\done.
+
+\example \verb|ivo_healpix_index(17, 359, -1)|
+\becomes \verb|73009064944|
+\done.
+\end{examples}
+
 \subsubsection{ivo\_healpix\_index(hpxOrder, point)}
 
 Returns the index (npix) of the HEALPix cell containing the spherical
@@ -173,6 +226,21 @@ numbering.
 \item[Source] This document.
 \end{description}
 
+\begin{examples}
+\example \verb|ivo_healpix_index(0, POINT(1, 1))|
+\becomes \verb|4|
+\done.
+
+\example \verb|ivo_healpix_index(17, POINT('ICRS', 1, 1))|
+\becomes \verb|81609757711|
+\done.
+
+\example \verb|ivo_healpix_index(17, CENTROID(CIRCLE(359, -1, 3)))|
+\becomes \verb|73009064944|
+\done.
+\end{examples}
+
+
 \subsubsection{ivo\_healpix\_center(hpxOrder, hpxIndex)}
 
 Returns a POINT corresponding to the center of the HEALPix cell
@@ -186,47 +254,29 @@ with index (npix) \texttt{hpxIndex} at order \texttt{hpxOrder}.
 	position.
 \end{args}
 
-\item[Return type] \texttt{POINT}
-
-\item[Source] This document.
-\end{description}
-
-\subsubsection{ivo\_apply\_pm(ra, dec, pmra, pmdec, epochDist)}
-
-Returns a POINT for the position an object at \texttt{ra},
-\texttt{dec} will be at after \texttt{epochDist} Julian years if its proper
-motion is \texttt{prma}, \texttt{pmdec}.  Positions must be in degrees,
-proper motions are expected in degrees/year. The proper motions must be
-given in the tangential plane (i.e., the simple derivative has been
-divided by $cos(\delta)$'').
-
-Note that this is an operation of spherical geometry, i.e., the function
-would work as well with non-equatorial coordinates \emph{and} proper
-motions.  However, you cannot, of course, mix galactic coordinates with
-equatorial proper motions.
-
-
-\begin{description}
-\item[Parameters]
-
-\begin{args}
-	\arg ra (REAL) -- longitude of the spherical position, in degrees.
-	\arg dec (REAL) -- latitude of the spherical position, in degrees.
-	\arg pmra (REAL) -- proper motion in longitude in the
-	tangential plane (i.e., the simple derivative has been divided by
-	cos(dec)), in degrees per Julian year.
-	\arg pmdec (REAL) -- proper motion in latitude, in degrees per Julian
-	year.
-	\arg epochDist (REAL) -- propagate the object this many Julian years.
-\end{args}
 
 \item[Return type] \texttt{POINT}
 
 \item[Source] This document.
 \end{description}
 
+\begin{examples}
+\example \verb|ivo_healpix_center(0, 6)|
+\becomes \verb|[180., 0.]|
+\done as a 2-array with \xmlel{xtype}=\emph{point}.
 
-\subsection{Text related}
+\example \verb|ivo_healpix_center(17, ivo_healpix_index(17, 23.4, 56.7))|
+\becomes \verb|[23.399843462947466, 56.70016214363192]|
+\done.
+
+\example \verb|ivo_healpix_center(17, 23.2)|
+\becomes undefined
+\done Implementations are adivsed to fail when floating point numbers
+are passed as indices, but may choose to do some rounding.
+\end{examples}
+
+
+\subsection{Text-Related}
 
 \subsubsection{ivo\_string\_agg(expression, delimiter)}
 
@@ -248,6 +298,17 @@ concatenated with \texttt{delimiter}.
 
 \item[Source] RegTAP \citep{2014ivoa.spec.1208D}
 \end{description}
+
+\begin{examples}
+\example \begin{lstlisting}[language=SQL]
+SELECT ivo_string_agg(table_name, ' <//> ')|
+FROM TAP_SCHEMA.tables
+WHERE table_name ILIKE 'tap_schema.%'
+\end{lstlisting}
+\becomes \verb|'tap_schema.columns <//> tap_schema.schemas <//> ta...'|
+\done Of course, the actual value depends on the contents of the TAP
+schema on the service used to run the query.
+\end{examples}
 
 \subsubsection{ivo\_nocasematch(value, pattern)}
 
@@ -274,24 +335,80 @@ operator should be used instead.
 \item[Source] RegTAP \citep{2014ivoa.spec.1208D}
 \end{description}
 
+\begin{examples}
+\example\verb|ivo_nocasematch('abcabc', 'ab%')|
+\becomes 1
+\done.
+
+\example\verb|ivo_nocasematch('ABcabc', 'ab__bc')|
+\becomes 1
+\done.
+
+\example\verb|ivo_nocasematch('abcabc', '%BC')|
+\becomes 1
+\done.
+
+\example\verb|ivo_nocasematch('abcabc', 'ABCABC')|
+\becomes 1
+\done.
+
+\example\verb|ivo_nocasematch('abcabc', 'abcab')|
+\becomes 0
+\done.
+\end{examples}
+
+Databases processing non-ASCII should perform case folding according to
+algorithm R2 in section 3.13, ``Default Case Algorithms'' of the Unicode
+Standard \citep{std:UNICODE}.
+
+
 \subsubsection{ivo\_hasword(haystack, needle)}
 
-Returns 1 if the string \texttt{needle} is contained (in some sense) in
-the string \texttt{haystack}, 0 otherwise.  This is intended to support
-somewhat ``Google-like'', soft string matches.
+Returns 1 if all tokens from the string \texttt{needle} are contained
+(in some sense) in the string \texttt{haystack}, 0 otherwise.  This is
+intended to support somewhat ``Google-like'', soft string matches.  This
+specification does not precisely specify what ``token'' exactly means
+and whether stemming or any other normalisation should be performed,
+except that matching must be case-insensitive within ASCII, and that
+the minimal token definition is a continuous run of ASCII characters.
+Implementors are encouraged to attempt a reasonable approximation to
+what Web search engines do.
 
 \begin{description}
 \item[Parameters]
 
 \begin{args}
-	\arg haystack (TEXT) -- text to match \texttt{needle} in.
 	\arg needle (TEXT) -- a string to locate in \texttt{haystack}.
+	\arg haystack (TEXT) -- text to match \texttt{needle} in.
 \end{args}
 
 \item[Return type] \texttt{INTEGER.}
 
 \item[Source] RegTAP \citep{2014ivoa.spec.1208D}
 \end{description}
+
+\begin{examples}
+\example \verb|ivo_hasword('Miller and Urey have', 'miller')|
+\becomes 1
+\done.
+
+\example \verb|ivo_hasword('shown that a primordial', 'show')|
+\becomes 1
+\done This could also be 0 on a platform that does not perform
+English-language stemming.
+
+\example \verb|ivo_hasword('shown that a primordial', 'soup')|
+\becomes 0
+\done.
+
+\example \verb|ivo_hasword('shown that a primordial', 'shown primordial')|
+\becomes 1
+\done All tokens from needle are in haystack.
+
+\example \verb|ivo_hasword('shown that a primordial', 'shown soup')|
+\becomes 0
+\done One token from needle is missing in haystack.
+\end{examples}
 
 
 \subsubsection{ivo\_hashlist\_has(hashlist, item)}
@@ -301,8 +418,8 @@ sign (\#), concatenated by hash signs; the \texttt{item} argument is
 a string not containing a hash sign. The function
 returns 1 if, compared case-insensitively,
 the second argument is in the list of words encoded in the first argument.
-The behaviour in case the second argument contains a hash sign is
-unspecified.
+In case the second argument does contain a hash sign, the function must
+return 0.
 
 \begin{description}
 \item[Parameters]
@@ -317,6 +434,25 @@ unspecified.
 
 \item[Source] RegTAP \citep{2014ivoa.spec.1208D}
 \end{description}
+
+\begin{examples}
+\example \verb|ivo_hashlist_has('red#green#blue', 'red')|
+\becomes 1
+\done.
+
+\example \verb|ivo_hashlist_has('Red#green#blue', 'red')|
+\becomes 1
+\done.
+
+\example \verb|ivo_hashlist_has('red#green#blue', 're')|
+\becomes 0
+\done.
+
+\example \verb|ivo_hashlist_has('red#green#blue', 'red#green')|
+\becomes 0
+\done.
+\end{examples}
+
 
 \subsection{Interval Arithmetic}
 
@@ -344,40 +480,41 @@ intervals.
 \citep{note:regstc}; standardised in this document.
 \end{description}
 
-\subsubsection{ivo\_interval\_has(value, interval)}
+\begin{examples}
+\example \verb|ivo_interval_overlaps(-2, -3, 2, 3)|
+\becomes 0
+\done.
 
-The function returns 1 if the interval \texttt{interval} contains
-\texttt{val}, 0 otherwise. Both limits are always included in
-\texttt{interval}.
+\example \verb|ivo_interval_overlaps(-2, 55.3, 2, 3)|
+\becomes 1
+\done.
 
-\begin{description}
-\item[Parameters]
+\example \verb|ivo_interval_overlaps(2, 3, -2, 55.3)|
+\becomes 1
+\done.
 
-\begin{args}
-	\arg value (NUMERIC) -- a value to test for interval membership.
-	\arg interval (INTERVAL) -- the interval to test against.  There are no
-	guarantees that whatever is put here can be a part of a select list or
-	that any other operation is possible on it (i.e., the implementation
-	of the UDF does not mean that some sort of interval is available as a
-	type in the underlying database engine).
-\end{args}
+\example \verb|ivo_interval_overlaps(-2, 55.3, 3, 2)|
+\becomes 0
+\done In accordance with common RDBS semantics, intervals with lower
+bound $>$ upper bound never overlap with anything.
 
-\item[Return type] \texttt{INTEGER}
-
-\item[Source] Originally proposed by the roadmap for STC discovery
-\citep{note:regstc}; standardised in this document.
-\end{description}
+\example \verb|ivo_interval_overlaps(-2, 2, 2, 3)|
+\becomes 1
+\done Relying on the special case of identical first upper {vs.}~second
+lower bound is probably not a good idea for floating point numbers that
+do not have a short and finite binary representation.
+\end{examples}
 
 \appendix
 
 \section{List of third-party user defined functions}
+\label{app:otherudfs}
 
 Informationally, this appendix gives a list of service-specific UDFs
 found during an all-VO survey of capabilities documents returned by
 registered TAP services.  The last such survey was performed in May
-2019.  The software used to construct the list is available within the
-version controlled repository this document is maintained in (see title
-page).
+2019.  The python script used to perform this survey is available
+with the document\footnote{\auxiliaryurl{harvestfuncs.py}}.
 
 The main purpose of this list is so implementors of similar
 functionality do not inadvertantly create needlessly incompatible
@@ -473,7 +610,7 @@ currently is no (meta-) data as lower and upper in the TAP response.
 \subsubsection{gavo\_transform(from\_sys, to\_sys, geo)}
 
 Transforms ADQL geometries between various reference systems.
-\texttt{GEO} can be a POINT, a \texttt{CIRCLE}, or a
+\texttt{geo} can be a \texttt{POINT}, a \texttt{CIRCLE}, or a
 \texttt{POLYGON}, and the function will return a geometry of the same
 type. In the current implementation, \texttt{from\_sys} and
 \texttt{to\_sys} must be literal strings (i.e., they cannot be computed
@@ -496,7 +633,7 @@ though expressions or be taken from database columns).
 \subsubsection{gavo\_ipix(long, lat)}
 
 Returns the q3c ipix \citep{soft:q3c} for a long/lat pair (it simply
-wraps the \texttt{13c\_angpix} function). This relates to a pixelisation
+wraps the \texttt{q3c\_angpix} function). This relates to a pixelisation
 scheme alternative to HEALPix.
 
 \begin{description}
@@ -513,8 +650,7 @@ scheme alternative to HEALPix.
 
 Returns a random number drawn from a normal distribution. Right now, the
 gaussian is approximated by summing up and scaling ten calls to random.
-For that very reason it is not precise or fast. Were to probe
-inadequate, a better implementation will be provided in the future.
+For that very reason it is neither precise nor fast.
 
 \begin{description}
 \item[Parameters]
@@ -526,49 +662,17 @@ inadequate, a better implementation will be provided in the future.
 \item[Return type] \texttt{REAL}
 \end{description}
 
-\section{Script used to obtain information shown here}
-
-A small primitive script using PyVO has been written in order to obtain
-the different UDF used throughout the Registry. The repeated items are
-purged and have been printed in JSON. Other formats like YAML or CSV can
-be supported too..
-
-\begin{lstlisting}
-from xml.etree import ElementTree
-import json
-
-from pyvo.registry import search as regsearch
-from pyvo.dal import TAPService
-from pyvo.io.vosi.tapregext import TableAccess
-
-udflist = []
-
-for service_record in regsearch(servicetype='tap'):
-    service = TAPService(service_record.access_url)
-    try: 
-        for capability in service.capabilities:
-            if 'TAP' in capability.standardid and isinstance(capability,
-                    TableAccess):
-                for language in capability.languages:
-                    for langfeatlist in language.languagefeaturelists:
-                        for feature in langfeatlist:
-                            udflist.append({'name': feature.form,
-                             'description': feature.description})
-    except:
-        pass
-
-udflist = list({value['name']:value for value in udflist}.values())
-
-#This prints a JSON output
-print(json.dumps(udflist, indent = 4))
-\end{lstlisting}
-
 \section{Changes from Previous Versions}
 
-No previous versions yet.  
-% these would be subsections "Changes from v. WD-..."
-% Use itemize environments.
+\subsection{Changes from PEN-20190925}
 
+\begin{itemize}
+\item Added Examples
+\item Removed \verb|ivo_apply_pm|, since the right specification needs a
+bit more thought.
+\item Removed \verb|ivo_interval_has|; this is still experimental, not
+the least because interval in ADQL is somewhat underspecified.
+\end{itemize}
 
 \bibliography{ivoatex/ivoabib,ivoatex/docrepo,local}
 
