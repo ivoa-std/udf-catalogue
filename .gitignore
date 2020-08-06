@@ -1,0 +1,13 @@
+tth_C/tth
+*.blg
+*.toc
+*.out
+*.pdf
+*.aux
+*.bbl
+ivoatexmeta.tex
+*.log
+*.html
+*.zip
+*.fdb_latexmk
+*.fls

@@ -1,0 +1,23 @@
+% definition pulled out of doc to hide it from tth (which gets confused
+% by ifthenelse
+
+\newenvironment{args}%
+% this is *only* for use within a description environment
+  {\hfil % let definition label stand on a line of its own.
+    \def\arg##1(##2){\item {\textit{##1} (\texttt{##2})}}
+    \begin{list}{$\bullet$}{\topsep=0pt\partopsep=0pt\parsep=0pt}
+    }%
+  {\end{list}}
+
+\newenvironment{examples}%
+  {\par\bigbreak
+    \noindent\textbf{Examples} (non-normative)\nobreak\par
+    \nobreak\vskip 3pt plus 1pt
+    \def\example{\par\noindent}%
+    \def\becomes{\hfil\break\strut\qquad$\to$ }%
+    \def\done##1.{\ifthenelse{\isempty{##1}}{\par}{%
+        \hfil\break{\footnotesize\fontshape{it}\selectfont
+        ##1.\par}}\vskip 2pt plus 2pt}}%
+  {\relax}
+
+
