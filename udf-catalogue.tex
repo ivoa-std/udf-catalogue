@@ -1,6 +1,8 @@
 \documentclass[11pt,a4paper]{ivoa}
 \input tthdefs
 
+\customcss{custom.css}
+
 \usepackage{xifthen}
 \lstloadlanguages{XML,SQL}
 \lstset{flexiblecolumns=true,basicstyle=\ttfamily}
@@ -12,32 +14,17 @@
 {\begin{html}</ul>\end{html}}
 
 \newenvironment{examples}%
-{\begin{html}<ul>\end{html}%
+{\begin{html}<p><strong>Examples</strong></p><ul>\end{html}%
   \def\example{\begin{html}<li><code>\end{html}}%
-  \def\becomes{ returns }%
-  \def\done##1.{\begin{html})</code>\end{html} ##1\begin{html}</li>\end{html}}}%
+  \def\becomes{\begin{html}</code><br/>\end{html} returns
+    \begin{html}<code>\end{html}}%
+  \def\done##1.{\begin{html}</code> <span class="explanation">\end{html}
+    ##1
+    \begin{html}</span></li>\end{html}}}%
 {\begin{html}</ul>\end{html}}
 
 \else
-\newenvironment{args}%
-% this is *only* for use within a description environment
-  {\hfil % let definition label stand on a line of its own.
-    \def\arg##1(##2){\item {\textit{##1} (\texttt{##2})}}
-    \begin{list}{$\bullet$}{\topsep=0pt\partopsep=0pt\parsep=0pt}
-    }%
-  {\end{list}}
-
-\newenvironment{examples}%
-  {\par\bigbreak
-    \noindent\textbf{Examples} (non-normative)\nobreak\par
-    \nobreak\vskip 3pt plus 1pt
-    \def\example{\par\noindent}%
-    \def\becomes{\hfil\break\strut\qquad$\to$ }%
-    \def\done##1.{\ifthenelse{\isempty{##1}}{\par}{%
-        \hfil\break{\footnotesize\fontshape{it}\selectfont
-        ##1.\par}}\vskip 2pt plus 2pt}}%
-  {\relax}
-
+\input{exampledef}
 \fi
 
 
@@ -273,7 +260,7 @@ with index (npix) \texttt{hpxIndex} at order \texttt{hpxOrder}.
 
 \example \verb|ivo_healpix_center(17, 23.2)|
 \becomes undefined
-\done Implementations are adivsed to fail when floating point numbers
+\done Implementations are advised to fail when floating point numbers
 are passed as indices, but may choose to do some rounding.
 \end{examples}
 
@@ -319,6 +306,10 @@ pattern is defined as for the SQL LIKE operator, but the match is
 performed case-insensitively.  Returns
 1 if the pattern matches, 0 otherwise.
 
+Databases processing non-ASCII should perform case folding according to
+algorithm R2 in section 3.13, ``Default Case Algorithms'' of the Unicode
+Standard \citep{std:UNICODE}.
+
 Please note that in ADQL versions higher than ADQL 2.1, the ILIKE
 operator should be used instead.
 
@@ -358,10 +349,6 @@ operator should be used instead.
 \becomes 0
 \done.
 \end{examples}
-
-Databases processing non-ASCII should perform case folding according to
-algorithm R2 in section 3.13, ``Default Case Algorithms'' of the Unicode
-Standard \citep{std:UNICODE}.
 
 
 \subsubsection{ivo\_hasword(haystack, needle)}

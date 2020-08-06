@@ -7,7 +7,7 @@ DOCNAME = udf-catalogue
 DOCVERSION = 1.0
 
 # Publication date, ISO format; update manually for "releases"
-DOCDATE = 2019-09-25
+DOCDATE = 2020-08-06
 
 # What is it you're writing: NOTE, WD, PR, REC, PEN, or EN
 DOCTYPE = PEN
@@ -18,8 +18,7 @@ AUTHOR_EMAIL=juaristi@uni-heidelberg.de
 
 # Source files for the TeX document (but the main file must always
 # be called $(DOCNAME).tex
-#SOURCES = $(DOCNAME).tex role_diagram.pdf
-SOURCES = $(DOCNAME).tex
+SOURCES = $(DOCNAME).tex custom.css
 
 # List of image files to be included in submitted package (anything that
 # can be rendered directly by common web browsers)
