@@ -1,10 +1,6 @@
 \documentclass[11pt,a4paper]{ivoa}
 \input tthdefs
 
-\SVN$Rev: 5852 $
-\SVN$Date: 2020-07-21 13:11:45 +0200 (ar., 21 uzt 2020) $
-\SVN$URL: https://volute.g-vo.org/svn/trunk/projects/dal/udf-catalogue/udf-catalogue.tex $
-
 \usepackage{xifthen}
 \lstloadlanguages{XML,SQL}
 \lstset{flexiblecolumns=true,basicstyle=\ttfamily}
@@ -94,7 +90,7 @@ infrastructure that enable VO applications.
 The Astronomical Data Query Language (ADQL) \citep{2008ivoa.spec.1030O}
 has the notion of user defined functions (UDF).  These provide a
 light-weight extension mechanism for operators of TAP services.  
-For instance, \citet{2016arXiv161109190T} shows how they enable the
+For instance, \citet{2016arXiv161109190T} show how they enable the
 construction of HEALPix maps although ADQL~2.0 itself entirely lacks
 facilities to deal with them.
 
@@ -154,7 +150,9 @@ parameters, the return value, and the authority the UDF was drawn from.
 In the parameter definitions, we do not distinguish between different
 precisions of floating point arguments.  Where we write \texttt{REAL}, the
 expectation is that the functions accept floating point values of any
-length.
+length.  Similarly, we write \texttt{TEXT} for anything sufficiently
+string-like, be it \texttt{CHAR(n)}, \texttt{VARCHAR(*)}, or something
+comparable.
 
 Most functions are accompanied by examples, which are intended to make
 the the effects of the functions clearer and give implementors a
@@ -532,7 +530,7 @@ We list the UDFs by prefix.
 \subsubsection{gavo\_simbadpoint(identifier)}
 
 Queries Simbad for an identifier and returns the corresponding point.
-Note that identifier can only be a literal, i.e., a simple string
+Note that \texttt{identifier} can only be a literal, i.e., a simple string
 rather than a column name.  Queries requiring a column reference in the
 argument should probably use Simbad's TAP service in a separate query.
 The query fails if Simbad cannot resolve the identifier.
@@ -591,7 +589,7 @@ contains the number of underflows (i.e., $\texttt{val}<\texttt{lower}$),
 \verb|result[nbins+1]| the number of overflows. Elements
 $1\ldots\texttt{nbins}$ are the counts in \texttt{nbins} bins of width
 $(\texttt{upper}-\texttt{lower})/\texttt{nbins}$.  Clients will have to
-convert back to physical units using some external communication, there
+convert back to physical units using some external communication, as there
 currently is no (meta-) data as lower and upper in the TAP response.
 
 \begin{description}
@@ -654,7 +652,7 @@ scheme alternative to HEALPix.
 
 Returns a random number drawn from a normal distribution. Right now, the
 gaussian is approximated by summing up and scaling ten calls to random.
-For that very reason it is neither precise nor fast.
+It is hence neither precise nor fast.
 
 \begin{description}
 \item[Parameters]
