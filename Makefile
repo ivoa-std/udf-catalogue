@@ -18,7 +18,7 @@ AUTHOR_EMAIL=juaristi@uni-heidelberg.de
 
 # Source files for the TeX document (but the main file must always
 # be called $(DOCNAME).tex
-SOURCES = $(DOCNAME).tex custom.css role_diagram.pdf
+SOURCES = $(DOCNAME).tex custom.css role_diagram.pdf gitmeta.tex
 
 # List of image files to be included in submitted package (anything that
 # can be rendered directly by common web browsers)
