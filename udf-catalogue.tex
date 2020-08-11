@@ -610,12 +610,18 @@ currently is no (meta-) data as lower and upper in the TAP response.
 
 \subsubsection{gavo\_transform(from\_sys, to\_sys, geo)}
 
-Transforms ADQL geometries between various reference systems.
-\texttt{geo} can be a \texttt{POINT}, a \texttt{CIRCLE}, or a
-\texttt{POLYGON}, and the function will return a geometry of the same
-type. In the current implementation, \texttt{from\_sys} and
-\texttt{to\_sys} must be literal strings (i.e., they cannot be computed
-though expressions or be taken from database columns).
+The function transforms ADQL geometries between various reference
+systems. geo can be a POINT, a CIRCLE, or a POLYGON, and the function
+will return a geometry of the same type. In the current implementation,
+\verb|from_sys| and \verb|to_sys| must be literal strings (i.e., they cannot be
+computed through expressions or be taken from database columns). All
+transforms are just simple rotations, which is only a rough
+approximation to the actual relationships between reference systems (in
+particular between FK4 and ICRS-based ones). Note that, in particular,
+the epoch is not changed (i.e., no proper motions are applied). We
+currently support the following reference frames: ICRS, FK5 (which is
+treated as ICRS), FK4 (for B1950. without epoch-dependent corrections),
+GALACTIC. Reference frame names are case-sensitive.
 
 \begin{description}
 \item[Parameters]
