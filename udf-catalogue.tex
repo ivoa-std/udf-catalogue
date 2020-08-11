@@ -81,14 +81,13 @@ For instance, \citet{2016arXiv161109190T} show how they enable the
 construction of HEALPix maps although ADQL~2.0 itself entirely lacks
 facilities to deal with them.
 
-In order to provide a reliable core set of such functions that, if
-present, have a constant meaning across multiple services, ADQL 2.1
-(still under review at the time of writing) will stipulate that user
-defined functions with names starting with \verb|ivo_| are to be used
-and defined interoperably, i.e., there should be an IVOA-wide consensus
-on their names and semantics. 
+In order to avoid different signatures or semantics on functions
+offering identical or similar functionality,  this document defines UDFs
+with names prefixed with \verb|ivo_|.  If services have functions with
+this names, they must work as defined here.
 
-In version 1.0, this note documented this consensus where it has been
+In version 1.0, this note documents a consensus 
+on such functions where it has been
 reached within other standards or in the review of this document.  
 
 In the future, where UDFs are not naturally associated with a
