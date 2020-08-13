@@ -1,4 +1,4 @@
-[![PDF-Preview](https://img.shields.io/badge/Preview-PDF-blue)] (../../releases/download/auto-pdf-preview/udf-catalogue-draft.pdf)]
+[![PDF-Preview](https://img.shields.io/badge/Preview-PDF-blue)](../../releases/download/auto-pdf-preview/udf-catalogue-draft.pdf)
 
 ## ADQL User Defined Functions catalogue
 
