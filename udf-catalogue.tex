@@ -123,19 +123,19 @@ IVOA architecture \citep{note:VOARCH}.  It relates to the following
 other standards:
 
 \begin{bigdescription}
-\item[ADQL, \citep{2008ivoa.spec.1030O}] This endorsed note defines the
+\item[ADQL \citep{2008ivoa.spec.1030O}] This endorsed note defines the
 user defined functions with the \verb|ivo_| prefix.  While ADQL 2.0
 does not treat those as special, they can be (and have been) used there
 already.  Normative language on \verb|ivo_| is expected to become
 part of ADQL 2.1.
 
-\item[RegTAP, \citep{2019ivoa.spec.1011D}] RegTAP first defined some of the
+\item[RegTAP \citep{2019ivoa.spec.1011D}] RegTAP first defined some of the
 UDFs defined here.  It is expected that later versions of RegTAP will
 refer to this note rather than maintaining a second definition, and
 deferring the actual definition of UDFs to this note should be the
 standard way of introducing UDFs used or required by a standard in the future.
 
-\item[MOC, \citep{2019ivoa.spec.1007F}] The HEALPix functions defined
+\item[MOC \citep{2019ivoa.spec.1007F}] The HEALPix functions defined
 here build on terminology introduced in the MOC specification.
 \end{bigdescription}
 
@@ -245,7 +245,8 @@ numbering.
 \subsubsection{ivo\_healpix\_center(hpxOrder, hpxIndex)}
 
 Returns a POINT corresponding to the center of the HEALPix cell
-with index (npix) \texttt{hpxIndex} at order \texttt{hpxOrder}.
+with index (npix) \texttt{hpxIndex} at order \texttt{hpxOrder} in NESTED
+numbering.
 
 \begin{description}
 \item[Parameters]
@@ -418,7 +419,8 @@ The \texttt{hashlist} argument is a list of words not containing the hash
 sign (\#), concatenated by hash signs; the \texttt{item} argument is
 a string not containing a hash sign. The function
 returns 1 if, compared case-insensitively,
-the second argument is in the list of words encoded in the first argument.
+the second argument is in the list of words encoded in the first
+argument, 0 otherwise.
 In case the second argument does contain a hash sign, the function must
 return 0.
 
