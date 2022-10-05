@@ -14,10 +14,10 @@
     \noindent\textbf{Examples} (non-normative)\nobreak\par
     \nobreak\vskip 3pt plus 1pt
     \def\example{\par\noindent}%
-    \def\becomes{\hfil\break\strut\qquad$\to$ }%
+    \def\becomes{\ifhmode\hfil\break\fi\strut\qquad$\to$ }%
     \def\done##1.{\ifthenelse{\isempty{##1}}{\par}{%
         \hfil\break{\footnotesize\fontshape{it}\selectfont
-        ##1.\par}}\vskip 2pt plus 2pt}}%
+        ##1.\par}}\vskip 4pt plus 2pt}}%
   {\relax}
 
 
