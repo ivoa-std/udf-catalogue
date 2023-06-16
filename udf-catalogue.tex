@@ -282,7 +282,7 @@ are passed as indices, but may choose to do some rounding.
 
 \subsection{Astrometry}
 
-\subsection{epoch\_prop\_pos(ra, dec, parallax, pmra, pmdec,
+\subsubsection{ivo\_epoch\_prop\_pos(ra, dec, parallax, pmra, pmdec,
   radial\_velocity, ref\_epoch, out\_epoch)}
 \label{epoch_prop_pos}
 
@@ -318,14 +318,14 @@ NULL here is to be interpreted as ``object is infinitely remote''.
 
 \arg pmra (REAL) -- the tangential plane proper motion in longitude at
 \texttt{ref\_epoch}, in mas/yr.  ``Tangential plane'' here means it is
-the temporal derivative of the longitude mulitplied by the cosine or the
+the temporal derivative of the longitude multiplied by the cosine of the
 latitude, which is what is given as proper motion in RA in almost all
 modern catalogues.  NULLs must be interpreted as 0.
 
 \arg pmdec (REAL) -- the object's proper motion in latitude at
 \texttt{ref\_epoch}, in mas/yr.  NULLs must be interpreted as 0.
 
-\arg radial\_velocity (REAL) -- the object's radial veloity at
+\arg radial\_velocity (REAL) -- the object's radial velocity at
 \texttt{ref\_epoch}, in km/s.  NULLs must be interpreted as 0.
 
 \arg ref\_epoch (REAL) -- the epoch for which the six previous
@@ -387,7 +387,7 @@ ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
 \end{examples}
 
 
-\subsection{epoch\_prop(ra, dec, parallax, pmra, pmdec,
+\subsubsection{ivo\_epoch\_prop(ra, dec, parallax, pmra, pmdec,
   radial\_velocity, ref\_epoch, out\_epoch)}
 
 This is epoch\_prop\_pos as described in Sect.~\ref{epoch_prop_pos},
