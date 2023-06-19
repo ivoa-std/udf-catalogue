@@ -4,10 +4,11 @@
 
 \customcss{custom.css}
 
+\usepackage{todonotes}
 \usepackage{xifthen}
 \lstloadlanguages{XML,SQL}
 \lstset{flexiblecolumns=true,basicstyle=\ttfamily,belowskip=0pt}
- 
+
 \iftth
 \newenvironment{args}%
 {\begin{html}<ul>\end{html}\def\arg##1(##2){\begin{html}<li><i>\end{html}%
@@ -42,7 +43,7 @@
 
 \previousversion[https://ivoa.net/documents/udf-catalogue/20200806/]{PEN-20200806}
 \previousversion[https://ivoa.net/documents/udf-catalogue/20190925]{PEN-20190925}
-       
+
 
 \begin{document}
 \begin{abstract}
@@ -78,7 +79,7 @@ infrastructure that enable VO applications.
 
 The Astronomical Data Query Language (ADQL) \citep{2008ivoa.spec.1030O}
 has the notion of user defined functions (UDF).  These provide a
-light-weight extension mechanism for operators of TAP services.  
+light-weight extension mechanism for operators of TAP services.
 For instance, \citet{2016arXiv161109190T} show how they enable the
 construction of HEALPix maps although ADQL~2.0 itself entirely lacks
 facilities to deal with them.
@@ -88,9 +89,9 @@ offering identical or similar functionality,  this document defines UDFs
 with names prefixed with \verb|ivo_|.  If services have functions with
 this names, they must work as defined here.
 
-In version 1.0, this note documents a consensus 
+In version 1.0, this note documents a consensus
 on such functions where it has been
-reached within other standards or in the review of this document.  
+reached within other standards or in the review of this document.
 
 In the future, where UDFs are not naturally associated with a
 particular standard, they can be proposed by editing this document and
@@ -160,7 +161,7 @@ starting point for tests.  Where examples disagree with the
 specification text, the text is normative.
 
 While ADQL does not support standalone evaluation of functions, a query
-like 
+like
 \begin{lstlisting}[language=SQL,aboveskip=\medskipamount]
   SELECT TOP 1 <example> AS res FROM TAP_SCHEMA.tables
 \end{lstlisting}
@@ -279,11 +280,151 @@ are passed as indices, but may choose to do some rounding.
 \end{examples}
 
 
+\subsection{Astrometry}
+
+\subsubsection{ivo\_epoch\_prop\_pos(ra, dec, parallax, pmra, pmdec,
+  radial\_velocity, ref\_epoch, out\_epoch)}
+\label{epoch_prop_pos}
+
+Returns an ADQL POINT giving the position at \texttt{out\_epoch} for an
+object with the six parameters at \texttt{ref\_epoch}. Essentially, it
+will apply the proper motion and the radial velocity under the
+assumption of linear motion.  Despite the name of the positional
+parameters, this is not restricted to equatorial systems, as long as
+positions and proper motions are expressed in the same reference frame.
+
+Implementations must assume linear motions of both the star and the sun
+(i.e., not include secular aberration).  No relativistic corrections at
+low parallaxes must be applied (which are very likely spurious for most
+applications of this UDF).  The recommended formalism is Lindegren's
+``rigorous treatment'' \citep{1997ESASP1200.....E}.
+
+This way, only the difference between ref\_epoch and out\_epoch is
+relevant to the function's result.  The signature was chosen for
+compatibility with established UDFs at major TAP service providers.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+\arg ra (REAL) -- the object's longitude at \texttt{ref\_epoch}, in
+degrees.  NULL values here are an error\todo{Or should the whole thing
+return NULL instead?}.
+
+\arg dec (REAL) -- the object's latitude at \texttt{ref\_epoch}, in
+degrees.  NULL values here are an error.
+
+\arg parallax (REAL) -- the parallax at \texttt{ref\_epoch} in mas.  A
+NULL here is to be interpreted as ``object is infinitely remote''.
+
+\arg pmra (REAL) -- the tangential plane proper motion in longitude at
+\texttt{ref\_epoch}, in mas/yr.  ``Tangential plane'' here means it is
+the temporal derivative of the longitude multiplied by the cosine of the
+latitude, which is what is given as proper motion in RA in almost all
+modern catalogues.  NULLs must be interpreted as 0.
+
+\arg pmdec (REAL) -- the object's proper motion in latitude at
+\texttt{ref\_epoch}, in mas/yr.  NULLs must be interpreted as 0.
+
+\arg radial\_velocity (REAL) -- the object's radial velocity at
+\texttt{ref\_epoch}, in km/s.  NULLs must be interpreted as 0.
+
+\arg ref\_epoch (REAL) -- the epoch for which the six previous
+parameters are given, in Julian years. NULLs are illegal here.
+
+\arg out\_epoch (REAL) -- the epoch for which to compute the new
+position.  NULLs are illegal here.
+\end{args}
+
+\item[Return type] \texttt{POINT}
+
+\item[Source] This document, version 1.1
+\end{description}
+
+\begin{examples}
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.604061404627978, 11.7932703828279]
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes [7.594068213694308, 11.807251375203935]
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, -428.8, NULL, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes [7.594079587029898, 11.807235464326332]
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, NULL, NULL, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes [7.594080321498365, 11.790440798509207]
+
+\begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, NULL,
+  300, -428.8, 52.51, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes [7.594079587020846, 11.807235464339055] \done This last value
+is approximative in the sense that the concrete ``small'' parallax has
+not been fixed normatively.
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(NULL, 11.79044105, 125,
+  300, NULL, NULL, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes an error.
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, NULL, 1875.0)
+\end{lstlisting}
+\becomes an error
+\end{examples}
+
+
+\subsubsection{ivo\_epoch\_prop(ra, dec, parallax, pmra, pmdec,
+  radial\_velocity, ref\_epoch, out\_epoch)}
+
+This is epoch\_prop\_pos as described in Sect.~\ref{epoch_prop_pos},
+except it returns a full parameter set at out\_epoch.
+
+\begin{description}
+\item[Parameters]
+  As for epoch\_prop\_pos.
+
+\item[Return type] REAL[6], consisting of the longitude and latitude in
+degrees, the parallax in mas, the proper motion in longitude and
+latitude in mas/yr, and the radial velocity in km/s.  As in the input
+parameters, the proper motion in longitude is given for the tangential
+plane (``has ${\textrm cos}(\delta)$ applied'').
+
+\item[Source] This document, version 1.1
+\end{description}
+
+\begin{examples}
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
+300.09877325973605, -428.934593565712, 52.50880381775256]
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  NULL, NULL, NULL, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
+\end{examples}
+
 \subsection{Text-Related}
 
 \subsubsection{ivo\_string\_agg(expression, delimiter)}
 
-An aggregate function returning all values of \texttt{expression} 
+An aggregate function returning all values of \texttt{expression}
 concatenated with \texttt{delimiter}.
 
 \begin{description}
@@ -496,7 +637,7 @@ When val is NULL, it counts as an underflow.
 \begin{examples}
 \example
 \begin{lstlisting}
-SELECT ivo_histogram(parallax, 0.5, 3.5, 8) 
+SELECT ivo_histogram(parallax, 0.5, 3.5, 8)
 FROM gaiadr3.nss_vim_fl
 \end{lstlisting}
 \becomes
@@ -506,7 +647,7 @@ FROM gaiadr3.nss_vim_fl
 
 \example
 \verb|SELECT ivo_histogram(LOG10(n_star+1), 3, 5, 5) FROM mwsc.main|
-\becomes 
+\becomes
 781 41 329 1239 1107 260 27
 \done on the TAP service at \url{http://dc.g-vo.org/tap}.
 \end{examples}
@@ -620,7 +761,7 @@ metadata.
 
 \subsubsection{gavo\_to\_mjd(d)}
 
-Converts a postgres timestamp to modified Julian date. This is naive; 
+Converts a postgres timestamp to modified Julian date. This is naive;
 no corrections for timezones, let alone time scales or reference
 positions are applied.  This will, therefore, only reach precisions
 below the level of a few minutes if the timestamps have compatible time
