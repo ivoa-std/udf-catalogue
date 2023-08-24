@@ -476,14 +476,46 @@ from \verb|from_sys| to \verb|to_sys|.
 \item[Return type] The function returns a value of the same type as
 \verb|geo|
 
-\item[Source] This document, version 1.1
+\item[Source] This document, version 1.1\todo{Examples!}
 \end{description}
 
 \subsection{Dates and Times}
 
-\subsubsection{ivo\_to\_jd(d TIMESTAMP)}
+\subsubsection{ivo\_to\_jd(d)}
 
-\todo{Schreiben}
+Converts a database timestamp to a Julian Date as a floating point
+number. This is naive; no corrections for timezones, let alone time
+scales or the like are done. Users can thus not expect this to be good
+to second-precision unless they are careful in the construction of the
+timestamp.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+\arg d (TIMESTAMP literal) -- a SQL timestamp.
+\end{args}
+
+\item[Return type] \verb|REAL|
+
+\item[Source] This document, version 1.1
+\end{description}
+
+\begin{examples}
+\example \verb|ivo_to_jd(CAST('2000-01-02T12:00:00' AS TIMESTAMP))|
+\becomes \verb|2451546.0|
+\done.
+
+\example \verb|ivo_to_jd('1910-12-31T06:00:00')|
+\becomes \verb|2419036.75|
+\done While not strictly necessary for compliance, implementations
+SHOULD accept reasonable strings -- primarily, DALI-style ISO dates --
+as arguments, in particular when they do not implement the optional CAST
+construct.
+
+\example \verb|ivo_to_jd(NULL)|
+\becomes NULL
+\done.
+\end{examples}
 
 \subsubsection{ivo\_to\_mjd(d TIMESTAMP)}
 
