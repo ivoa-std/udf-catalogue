@@ -929,90 +929,6 @@ We list the UDFs by prefix.
 
 \subsection{UDFs prefixed gavo\_}
 
-\subsubsection{gavo\_simbadpoint(identifier)}
-
-Queries Simbad for an identifier and returns the corresponding point.
-Note that \texttt{identifier} can only be a literal, i.e., a simple string
-rather than a column name.  Queries requiring a column reference in the
-argument should probably use Simbad's TAP service in a separate query.
-The query fails if Simbad cannot resolve the identifier.
-
-\begin{description}
-\item[Parameters]
-\begin{args}
-	\arg identifier (TEXT) -- a string containing an identifier Simbad can
-	resolve.
-\end{args}
-
-\item[Return type] \texttt{POINT}
-\end{description}
-
-\subsubsection{gavo\_to\_jd(d)}
-
-Converts a postgres timestamp to a Julian date. This is naive;
-no corrections for timezones, let alone time scales or reference
-positions are applied.  This will, therefore, only reach precisions
-below the level of a few minutes if the timestamps have compatible time
-metadata.
-
-\begin{description}
-\item[Parameters]
-\begin{args}
-	\arg d (\texttt{TIMESTAMP}) -- the SQL timestamp to convert.
-\end{args}
-
-\item[Return type] \texttt{REAL}
-\end{description}
-
-
-\subsubsection{gavo\_to\_mjd(d)}
-
-Converts a postgres timestamp to modified Julian date. This is naive;
-no corrections for timezones, let alone time scales or reference
-positions are applied.  This will, therefore, only reach precisions
-below the level of a few minutes if the timestamps have compatible time
-metadata.
-
-\begin{description}
-\item[Parameters]
-\begin{args}
-	\arg d (\texttt{TIMESTAMP}) -- the SQL timestamp to convert.
-\end{args}
-
-\item[Return type] \texttt{REAL}
-\end{description}
-
-
-
-\subsubsection{gavo\_transform(from\_sys, to\_sys, geo)}
-
-The function transforms ADQL geometries between various reference
-systems. geo can be a POINT, a CIRCLE, or a POLYGON, and the function
-will return a geometry of the same type. In the current implementation,
-\verb|from_sys| and \verb|to_sys| must be literal strings (i.e., they cannot be
-computed through expressions or be taken from database columns). All
-transforms are just simple rotations, which is only a rough
-approximation to the actual relationships between reference systems (in
-particular between FK4 and ICRS-based ones). Note that, in particular,
-the epoch is not changed (i.e., no proper motions are applied). We
-currently support the following reference frames: ICRS, FK5 (which is
-treated as ICRS), FK4 (for B1950. without epoch-dependent corrections),
-GALACTIC. Reference frame names are case-sensitive.
-
-\begin{description}
-\item[Parameters]
-
-\begin{args}
-	\arg from\_sys (TEXT) -- name of the source reference system (there is no
-	defined way to obtain a list of supported reference systems).
-	\arg to\_sys (TEXT) -- name of the target reference system.
-	\arg geo (GEOMETRY) -- an ADQL geometry (POINT, CIRCLE, POLYGON).
-\end{args}
-
-\item[Return type] a geometry of the type of the \texttt{geo} argument.
-\end{description}
-
-
 \subsubsection{gavo\_ipix(long, lat)}
 
 Returns the q3c ipix \citep{soft:q3c} for a long/lat pair (it simply
@@ -1027,22 +943,6 @@ scheme alternative to HEALPix.
 \end{args}
 
 \item[Return type] \texttt{BIGINT}
-\end{description}
-
-\subsubsection{gavo\_normal\_random(mu, sigma)}
-
-Returns a random number drawn from a normal distribution. Right now, the
-gaussian is approximated by summing up and scaling ten calls to random.
-It is hence neither precise nor fast.
-
-\begin{description}
-\item[Parameters]
-\begin{args}
-	\arg mu (REAL) -- the mean of the normal distribution.
-	\arg sigma (REAL) -- the width of the normal distribution..
-\end{args}
-
-\item[Return type] \texttt{REAL}
 \end{description}
 
 \section{Changes from Previous Versions}
