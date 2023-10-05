@@ -752,43 +752,9 @@ FROM gaiadr3.nss_vim_fl
 \done on the TAP service at \url{http://dc.g-vo.org/tap}.
 \end{examples}
 
-\subsubsection{ivo\_normal\_random(mu, sigma)}
+\subsubsection{ivo\_normal\_random(mu REAL, sigma REAL)}
 
-Returns a random number drawn from a normal distribution
-\begin{equation}
-\label{normaldist}
-\frac{1}{\sqrt{2\pi\sigma^2}}
-\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right).
-\end{equation}
-
-Implementation note: Few databases at this point have built-in
-facilities for drawing random numbers from non-uniform distributions.
-In practice, an implementation of the type
-\begin{lstlisting}
-(((random()+random()+random()+random()+random()
-  +random()+random()+random()+random()+random()-5
-)*sigma)+mu)
-\end{lstlisting}
-has been giving sufficiently good results and adequate runtime
-behaviour.  Of course, better approximations are preferred.
-
-\begin{description}
-\item[Parameters]
-\begin{args}
-  \arg mu (REAL) -- the $\mu$ in eq.~(\ref{normaldist})
-  \arg sigma (REAL) -- the $\sigma$ in eq.~(\ref{normaldist})
-\end{args}
-
-\item[Return Type] REAL
-
-\item[Source] This document, version 1.1
-\end{description}
-
-\begin{examples}
-\example \verb|ivo_normal_random(10, 5), ivo_normal_random(10, 5)|
-\becomes 3.4275427, 7.839408
-\done (or, really, almost anything else).
-\end{examples}
+\todo{Schreiben}
 
 \subsection{Convenience Functions}
 
