@@ -282,7 +282,7 @@ are passed as indices, but may choose to do some rounding.
 
 \subsection{Astrometry}
 
-\subsubsection{ivo\_epoch\_prop\_pos(ra, dec, parallax, pmra, pmdec,\\
+\subsubsection{ivo\_epoch\_prop\_pos(ra, dec, parallax, pmra, pmdec,
   radial\_velocity, ref\_epoch, out\_epoch)}
 \label{epoch_prop_pos}
 
@@ -387,6 +387,7 @@ ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
 \end{examples}
 
 
+<<<<<<< HEAD
 \subsubsection{ivo\_transform(from\_sys, to\_sys, geo)}
 
 Transforms ADQL geometries (i.e., at least values of type \verb|POINT|,
@@ -442,19 +443,39 @@ from \verb|from_sys| to \verb|to_sys|.
 \item[Return type] The function returns a value of the same type as
 \verb|geo|
 
+\subsubsection{ivo\_epoch\_prop(ra, dec, parallax, pmra, pmdec,
+  radial\_velocity, ref\_epoch, out\_epoch)}
+
+This is epoch\_prop\_pos as described in Sect.~\ref{epoch_prop_pos},
+except it returns a full parameter set at out\_epoch.
+
+\begin{description}
+\item[Parameters]
+  As for epoch\_prop\_pos.
+
+\item[Return type] REAL[6], consisting of the longitude and latitude in
+degrees, the parallax in mas, the proper motion in longitude and
+latitude in mas/yr, and the radial velocity in km/s.  As in the input
+parameters, the proper motion in longitude is given for the tangential
+plane (``has ${\textrm cos}(\delta)$ applied'').
+
+
 \item[Source] This document, version 1.1
 \end{description}
 
-\subsection{Dates and Times}
-
-\subsubsection{ivo\_to\_jd(d TIMESTAMP)}
-
-\todo{Schreiben}
-
-\subsubsection{ivo\_to\_mjd(d TIMESTAMP)}
-
-\todo{Schreiben}
-
+\begin{examples}
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
+300.09877325973605, -428.934593565712, 52.50880381775256]
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  NULL, NULL, NULL, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
+\end{examples}
 
 \subsection{Text-Related}
 
@@ -688,10 +709,6 @@ FROM gaiadr3.nss_vim_fl
 \done on the TAP service at \url{http://dc.g-vo.org/tap}.
 \end{examples}
 
-\subsubsection{ivo\_normal\_random(mu REAL, sigma REAL)}
-
-\todo{Schreiben}
-
 \subsection{Convenience Functions}
 
 \subsubsection{ivo\_interval\_overlaps(a1, b1, a2, b2)}
@@ -742,10 +759,6 @@ bound $>$ upper bound never overlap with anything.
 lower bound is probably not a good idea for floating point numbers that
 do not have a short and finite binary representation.
 \end{examples}
-
-\subsubsection{ivo\_simbadpoint(identifier TEXT)}
-
-\todo{Schreiben}
 
 \appendix
 
