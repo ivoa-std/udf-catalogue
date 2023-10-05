@@ -671,40 +671,6 @@ do not have a short and finite binary representation.
 
 \appendix
 
-\section{List of third-party user defined functions}
-\label{app:otherudfs}
-
-Informationally, this appendix gives a list of service-specific UDFs
-found during an all-VO survey of capabilities documents returned by
-registered TAP services.  The last such survey was performed in May
-2019.  The python script used to perform this survey is available
-with the document\footnote{\auxiliaryurl{harvestfuncs.py}}.
-
-The main purpose of this list is so implementors of similar
-functionality do not inadvertantly create needlessly incompatible
-signatures.  UDFs implemented under more than one prefix should probably
-be considered to become \verb|ivo_|-prefixed UDFs.
-
-We list the UDFs by prefix.
-
-\subsection{UDFs prefixed gavo\_}
-
-\subsubsection{gavo\_ipix(long, lat)}
-
-Returns the q3c ipix \citep{soft:q3c} for a long/lat pair (it simply
-wraps the \texttt{q3c\_angpix} function). This relates to a pixelisation
-scheme alternative to HEALPix.
-
-\begin{description}
-\item[Parameters]
-\begin{args}
-	\arg long (REAL) -- the longitude to compute the ipix for.
-	\arg lat (REAL) -- the latitude to compute the ipix for.
-\end{args}
-
-\item[Return type] \texttt{BIGINT}
-\end{description}
-
 \section{Changes from Previous Versions}
 
 \subsection{Changes from EN-1.0}
@@ -712,6 +678,8 @@ scheme alternative to HEALPix.
 \begin{itemize}
 \item Added \verb|ivo_epoch_prop_pos| (gavo, esa)
 \item Added \verb|ivo_histogram| (gavo, ari)
+\item Removed the list of third-party UDFs; its proper maintenance would
+have become too tedious.
 \end{itemize}
 
 \subsection{Changes from PEN-20200806}
