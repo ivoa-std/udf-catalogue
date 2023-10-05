@@ -100,8 +100,9 @@ changes.  In effect, this endorsed note is the management tool for
 the \verb|ivo_| ``namespace'' in ADQL user defined functions.
 
 Note that no function given here is required to be present in a generic
-TAP service (though other standards may pose such requirements;
-\verb|ivo_hashlist_has|, for instance, is required by both
+TAP service (though other standards may pose such requirements; for
+instance,
+\verb|ivo_hashlist_has| is required by both
 RegTAP and EPN-TAP).  However, if a service implements any UDF with a
 name mentioned in this document, its semantics must be as specified here.
 
@@ -282,7 +283,7 @@ are passed as indices, but may choose to do some rounding.
 
 \subsection{Astrometry}
 
-\subsubsection{ivo\_epoch\_prop\_pos(ra, dec, parallax, pmra, pmdec,
+\subsubsection{ivo\_epoch\_prop\_pos(ra, dec, parallax, pmra, pmdec,\\
   radial\_velocity, ref\_epoch, out\_epoch)}
 \label{epoch_prop_pos}
 
@@ -307,8 +308,7 @@ compatibility with established UDFs at major TAP service providers.
 \item[Parameters]
 \begin{args}
 \arg ra (REAL) -- the object's longitude at \texttt{ref\_epoch}, in
-degrees.  NULL values here are an error\todo{Or should the whole thing
-return NULL instead?}.
+degrees.  NULL values here are an error.
 
 \arg dec (REAL) -- the object's latitude at \texttt{ref\_epoch}, in
 degrees.  NULL values here are an error.
@@ -384,97 +384,6 @@ ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
   300, -428.8, 52.51, NULL, 1875.0)
 \end{lstlisting}
 \becomes an error
-\end{examples}
-
-
-<<<<<<< HEAD
-\subsubsection{ivo\_transform(from\_sys, to\_sys, geo)}
-
-Transforms ADQL geometries (i.e., at least values of type \verb|POINT|,
-\verb|CIRCLE|, or verb|POLYGON|) between various reference systems. The
-function will return a geometry of the same type as the \verb|geo|
-argument.
-
-As specified here, \verb|from_sys| and \verb|to_sys| must be literal
-strings (i.e., they cannot be computed through expressions or be taken
-from database columns), although implementors are free to accept more
-general string expressions as an extension.  The identifiers of the
-reference frames must be taken from the IVOA refframe
-vocabulary\footnote{\url{http://www.ivoa.net/rdf/refframe}}, where
-additional reference frames can be added as needed as described in
-\citet{2023ivoa.spec.0206D}.  Services publishing sky data are advised
-to implement ICRS and GALACTIC at the very least.
-
-Implementations should list the reference frames supported in their
-local descriptions of this function.
-
-Reference frame identifiers are case-sensitive.
-
-For reproducability, all transforms should be implemented as simple
-rotations. This is only a rough approximation to the actual
-relationships between reference systems, and applications requiring high
-levels of precision in references frame transforms have to perform these
-outside of the database.
-
-For equinox-dependent frames, we for now define default equinoxes:
-
-\begin{itemize}
-\item FK5: J2000.0
-\item FK4: J1950.0
-\item ECLIPTIC: J2000.0
-\end{itemize}
-
-A later version of this document may define a four-argument form of
-ivo\_transform which allows the specification of equinoxes or other
-frame-dependent metadata.
-
-\begin{description}
-\item[Parameters]
-\begin{args}
-\arg from\_sys (string literal) -- the refframe identifier of the system
-\verb|geo| is in.
-\arg to\_sys (string literal) -- the refframe identifier of the system
-the return value is in.
-\arg geo (GEOMETRY) -- a \verb|POINT|, \verb|CIRCLE|, or \verb|POLYGON|
-(accepting and transforming additional types is permitted)  to transform
-from \verb|from_sys| to \verb|to_sys|.
-\end{args}
-
-\item[Return type] The function returns a value of the same type as
-\verb|geo|
-
-\subsubsection{ivo\_epoch\_prop(ra, dec, parallax, pmra, pmdec,
-  radial\_velocity, ref\_epoch, out\_epoch)}
-
-This is epoch\_prop\_pos as described in Sect.~\ref{epoch_prop_pos},
-except it returns a full parameter set at out\_epoch.
-
-\begin{description}
-\item[Parameters]
-  As for epoch\_prop\_pos.
-
-\item[Return type] REAL[6], consisting of the longitude and latitude in
-degrees, the parallax in mas, the proper motion in longitude and
-latitude in mas/yr, and the radial velocity in km/s.  As in the input
-parameters, the proper motion in longitude is given for the tangential
-plane (``has ${\textrm cos}(\delta)$ applied'').
-
-
-\item[Source] This document, version 1.1
-\end{description}
-
-\begin{examples}
-\example \begin{lstlisting}
-ivo_epoch_prop(7.606083572, 11.79044105, 125,
-  300, -428.8, 52.51, 2016.0, 1992.25)
-\end{lstlisting}
-\becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
-300.09877325973605, -428.934593565712, 52.50880381775256]
-\example \begin{lstlisting}
-ivo_epoch_prop(7.606083572, 11.79044105, 125,
-  NULL, NULL, NULL, 2016.0, 1992.25)
-\end{lstlisting}
-\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
 \end{examples}
 
 \subsection{Text-Related}
