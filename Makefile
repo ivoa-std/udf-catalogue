@@ -4,13 +4,13 @@
 DOCNAME = udf-catalogue
 
 # count up; you probably do not want to bother with versions <1.0
-DOCVERSION = 1.0
+DOCVERSION = 1.1
 
 # Publication date, ISO format; update manually for "releases"
-DOCDATE = 2021-03-10
+DOCDATE = 2023-10-10
 
 # What is it you're writing: NOTE, WD, PR, REC, PEN, or EN
-DOCTYPE = EN
+DOCTYPE = PEN
 
 # An e-mail address of the person doing the submission to the document
 # repository (can be empty until a make upload is being made)

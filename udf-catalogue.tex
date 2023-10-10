@@ -41,6 +41,7 @@
 
 \editor[https://wiki.ivoa.net/twiki/bin/view/IVOA/JonJuaristiCampillo]{Jon Juaristi Campillo}
 
+\previousversion[https://www.ivoa.net/documents/udf-catalogue/20210310]{EN-1.0}
 \previousversion[https://ivoa.net/documents/udf-catalogue/20200806/]{PEN-20200806}
 \previousversion[https://ivoa.net/documents/udf-catalogue/20190925]{PEN-20190925}
 
@@ -307,32 +308,32 @@ compatibility with established UDFs at major TAP service providers.
 \begin{description}
 \item[Parameters]
 \begin{args}
-\arg ra (REAL) -- the object's longitude at \texttt{ref\_epoch}, in
+\arg ra (REAL) -- the object's longitude at \emph{ref\_epoch}, in
 degrees.  NULL values here are an error.
 
-\arg dec (REAL) -- the object's latitude at \texttt{ref\_epoch}, in
+\arg dec (REAL) -- the object's latitude at \emph{ref\_epoch}, in
 degrees.  NULL values here are an error.
 
-\arg parallax (REAL) -- the parallax at \texttt{ref\_epoch} in mas.  A
+\arg parallax (REAL) -- the parallax at \emph{ref\_epoch} in mas.  A
 NULL here is to be interpreted as ``object is infinitely remote''.
 
 \arg pmra (REAL) -- the tangential plane proper motion in longitude at
-\texttt{ref\_epoch}, in mas/yr.  ``Tangential plane'' here means it is
+\emph{ref\_epoch}, in mas/yr.  ``Tangential plane'' here means it is
 the temporal derivative of the longitude multiplied by the cosine of the
 latitude, which is what is given as proper motion in RA in almost all
 modern catalogues.  NULLs must be interpreted as 0.
 
 \arg pmdec (REAL) -- the object's proper motion in latitude at
-\texttt{ref\_epoch}, in mas/yr.  NULLs must be interpreted as 0.
+\emph{ref\_epoch}, in mas/yr.  NULLs must be interpreted as 0.
 
 \arg radial\_velocity (REAL) -- the object's radial velocity at
-\texttt{ref\_epoch}, in km/s.  NULLs must be interpreted as 0.
+\emph{ref\_epoch}, in km/s.  NULLs must be interpreted as 0.
 
 \arg ref\_epoch (REAL) -- the epoch for which the six previous
-parameters are given, in Julian years. NULLs are illegal here.
+parameters are given, in Julian years. NULL values here are an error.
 
 \arg out\_epoch (REAL) -- the epoch for which to compute the new
-position.  NULLs are illegal here.
+position.  NULL values here are an error.
 \end{args}
 
 \item[Return type] \texttt{POINT}
@@ -345,25 +346,25 @@ position.  NULLs are illegal here.
 ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
   300, -428.8, 52.51, 2016.0, 1992.25)
 \end{lstlisting}
-\becomes [7.604061404627978, 11.7932703828279]
+\becomes [7.604061404627978, 11.7932703828279]\done.
 
 \example \begin{lstlisting}
 ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
   300, -428.8, 52.51, 2016.0, 1875.0)
 \end{lstlisting}
-\becomes [7.594068213694308, 11.807251375203935]
+\becomes [7.594068213694308, 11.807251375203935]\done.
 
 \example \begin{lstlisting}
 ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
   300, -428.8, NULL, 2016.0, 1875.0)
 \end{lstlisting}
-\becomes [7.594079587029898, 11.807235464326332]
+\becomes [7.594079587029898, 11.807235464326332]\done.
 
 \example \begin{lstlisting}
 ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
   300, NULL, NULL, 2016.0, 1875.0)
 \end{lstlisting}
-\becomes [7.594080321498365, 11.790440798509207]
+\becomes [7.594080321498365, 11.790440798509207]\done.
 
 \begin{lstlisting}
 ivo_epoch_prop_pos(7.606083572, 11.79044105, NULL,
@@ -377,13 +378,13 @@ not been fixed normatively.
 ivo_epoch_prop_pos(NULL, 11.79044105, 125,
   300, NULL, NULL, 2016.0, 1875.0)
 \end{lstlisting}
-\becomes an error.
+\becomes an error\done.
 
 \example \begin{lstlisting}
 ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
   300, -428.8, 52.51, NULL, 1875.0)
 \end{lstlisting}
-\becomes an error
+\becomes an error\done.
 \end{examples}
 
 \subsection{Text-Related}
