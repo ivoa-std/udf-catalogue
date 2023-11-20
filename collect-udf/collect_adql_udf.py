@@ -20,6 +20,7 @@ FILE_TITLE = 'List of third party User Defined functions'
 udf_list = []
 
 for service_record in regsearch(servicetype='tap'):
+    print("Querying service {}...".format(service_record.short_name))
     service = TAPService(service_record.access_url)
     try:
         for capability in service.capabilities:
@@ -39,6 +40,7 @@ udf_list = list({v[NAME_FIELD]:v for v in udf_list}.values())
 with open(FILE_NAME, 'w') as output_file:
     output_file.write(FILE_TITLE + "\n")
     output_file.write("*" * len(FILE_TITLE) + '\n\n')
+    output_file.write("Generated with ``collect_adql_udf.py``\n\n")
     output_file.write("Last generated: " +
                       datetime.now().strftime("%Y-%m-%d %H:%M:%S") +
                       "\n\n")
