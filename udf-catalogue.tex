@@ -380,6 +380,39 @@ ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
 \becomes an error\done.
 \end{examples}
 
+\subsubsection{ivo\_epoch\_prop(ra, dec, parallax, pmra, pmdec,\\
+  radial\_velocity, ref\_epoch, out\_epoch)}
+
+This is epoch\_prop\_pos as described in Sect.~\ref{epoch_prop_pos},
+except it returns a full parameter set at out\_epoch.
+
+\begin{description}
+\item[Parameters]
+  As for epoch\_prop\_pos.
+
+\item[Return type] REAL[6], consisting of the longitude and latitude in
+degrees, the parallax in mas, the proper motion in longitude and
+latitude in mas/yr, and the radial velocity in km/s.  As in the input
+parameters, the proper motion in longitude is given for the tangential
+plane (``has ${\textrm cos}(\delta)$ applied'').
+
+\item[Source] This document, version 1.1
+\end{description}
+
+\begin{examples}
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
+300.09877325973605, -428.934593565712, 52.50880381775256]
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  NULL, NULL, NULL, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
+\end{examples}
+
 \subsection{Text-Related}
 
 \subsubsection{ivo\_string\_agg(expression, delimiter)}
@@ -666,6 +699,12 @@ do not have a short and finite binary representation.
 \appendix
 
 \section{Changes from Previous Versions}
+
+\subsection{Changes from EN-1.1}
+
+\begin{itemize}
+\item Adding \verb|ivo_epoch_prop| as astrometry function (gavo, esa)
+\end{itemize}
 
 \subsection{Changes from EN-1.0}
 
