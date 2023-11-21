@@ -397,7 +397,7 @@ latitude in mas/yr, and the radial velocity in km/s.  As in the input
 parameters, the proper motion in longitude is given for the tangential
 plane (``has ${\textrm cos}(\delta)$ applied'').
 
-\item[Source] This document, version 1.1
+\item[Source] This document, version 1.2
 \end{description}
 
 \begin{examples}
@@ -646,6 +646,44 @@ FROM gaiadr3.nss_vim_fl
 \done on the TAP service at \url{http://dc.g-vo.org/tap}.
 \end{examples}
 
+\subsubsection{ivo\_normal\_random(mu, sigma)}
+
+Returns a random number drawn from a normal distribution
+\begin{equation}
+\label{normaldist}
+\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right).
+\end{equation}
+
+Implementation note: Few databases at this point have built-in
+facilities for drawing random numbers from non-uniform distributions.
+In practice, an implementation of the type
+\begin{lstlisting}
+(((random()+random()+random()+random()+random()
+  +random()+random()+random()+random()+random()-5
+)*sigma)+mu)
+\end{lstlisting}
+has been giving sufficiently good results and adequate runtime
+behaviour.  Of course, better approximations are preferred.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+  \arg mu (REAL) -- the $\mu$ in eq.~(\ref{normaldist})
+  \arg sigma (REAL) -- the $\sigma$ in eq.~(\ref{normaldist})
+\end{args}
+
+\item[Return Type] REAL
+
+\item[Source] This document, version 1.2
+\end{description}
+
+\begin{examples}
+\example \verb|ivo_normal_random(10, 5), ivo_normal_random(10, 5)|
+\becomes 3.4275427, 7.839408
+\done (or, really, almost anything else).
+\end{examples}
+
 \subsection{Convenience Functions}
 
 \subsubsection{ivo\_interval\_overlaps(a1, b1, a2, b2)}
@@ -714,7 +752,7 @@ service should be used.
 
 \item[Return type] \texttt{POINT}
 
-\item[Source] This document, version 1.1
+\item[Source] This document, version 1.2
 \end{description}
 
 \begin{examples}
@@ -739,6 +777,7 @@ in (which ought to be included in the message) cannot be resolved by Simbad.
 \begin{itemize}
 \item Adding \verb|ivo_epoch_prop| as astrometry function (gavo, esa)
 \item Added \verb|ivo_simbadpoint| as convenience function (gavo, esa)
+\item Added \verb|ivo_normal_random| as a statstics function (gavo, esa)
 \end{itemize}
 
 \subsection{Changes from EN-1.0}
