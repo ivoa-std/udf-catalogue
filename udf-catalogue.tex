@@ -337,6 +337,20 @@ position.  NULL values here are an error.
 
 \begin{examples}
 \example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
+300.09877325973605, -428.934593565712, 52.50880381775256]
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  NULL, NULL, NULL, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
+\end{examples}
+
+\begin{examples}
+\example \begin{lstlisting}
 ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
   300, -428.8, 52.51, 2016.0, 1992.25)
 \end{lstlisting}
@@ -400,19 +414,63 @@ plane (``has ${\textrm cos}(\delta)$ applied'').
 \item[Source] This document, version 1.2
 \end{description}
 
+\subsection{Dates and Times}
+
+\subsubsection{ivo\_to\_jd(d)}
+
+Converts a database timestamp to a Julian Date as a floating point
+number. This is naive; no corrections for timezones, let alone time
+scales or the like are done. Users can thus not expect this to be good
+to second-precision unless they are careful in the construction of the
+timestamp.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+\arg d (TIMESTAMP literal) -- a SQL timestamp.
+\end{args}
+
+\item[Return type] \verb|REAL|
+
+\item[Source] This document, version 1.2\todo{Examples!}
+\end{description}
+
+\subsubsection{ivo\_to\_mjd(d TIMESTAMP)}
+
+Converts a database timestamp to a Modified Julian Date as a floating
+point number. This is naive; no corrections for timezones, let alone
+time scales or the like are done. Users can thus not expect this to be
+good to second-level precision unless they are careful in the construction of
+the timestamp.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+\arg d (TIMESTAMP literal) -- a SQL timestamp.
+\end{args}
+
+\item[Return type] \verb|REAL|
+
+\item[Source] This document, version 1.1
+\end{description}
+
 \begin{examples}
-\example \begin{lstlisting}
-ivo_epoch_prop(7.606083572, 11.79044105, 125,
-  300, -428.8, 52.51, 2016.0, 1992.25)
-\end{lstlisting}
-\becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
-300.09877325973605, -428.934593565712, 52.50880381775256]
-\example \begin{lstlisting}
-ivo_epoch_prop(7.606083572, 11.79044105, 125,
-  NULL, NULL, NULL, 2016.0, 1992.25)
-\end{lstlisting}
-\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
+\example \verb|ivo_to_mjd(CAST('2000-01-02T12:00:00' AS TIMESTAMP))|
+\becomes \verb|51545.5|
+\done.
+
+\example \verb|ivo_to_mjd('1910-12-31T06:00:00')|
+\becomes \verb|19036.25|
+\done While not strictly necessary for compliance, implementations
+SHOULD accept reasonable strings -- primarily, DALI-style ISO dates --
+as arguments, in particular when they do not implement the optional CAST
+construct.
+
+\example \verb|ivo_to_mjd(NULL)|
+\becomes NULL
+\done.
 \end{examples}
+
 
 \subsection{Text-Related}
 
@@ -775,9 +833,11 @@ in (which ought to be included in the message) cannot be resolved by Simbad.
 \subsection{Changes from EN-1.1}
 
 \begin{itemize}
-\item Adding \verb|ivo_epoch_prop| as astrometry function (gavo, esa)
+\item Added \verb|ivo_epoch_prop| as astrometry function (gavo, esa)
 \item Added \verb|ivo_simbadpoint| as convenience function (gavo, esa)
 \item Added \verb|ivo_normal_random| as a statstics function (gavo, esa)
+\item Added \verb|ivo_to_jd| and \verb|ivo_to_mjd| as a datetime
+functions (gavo, esa)
 \end{itemize}
 
 \subsection{Changes from EN-1.0}
