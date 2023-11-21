@@ -337,6 +337,7 @@ position.  NULL values here are an error.
 
 \begin{examples}
 \example \begin{lstlisting}
+<<<<<<< HEAD
 ivo_epoch_prop(7.606083572, 11.79044105, 125,
   300, -428.8, 52.51, 2016.0, 1992.25)
 \end{lstlisting}
@@ -349,53 +350,8 @@ ivo_epoch_prop(7.606083572, 11.79044105, 125,
 \becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
 \end{examples}
 
-\begin{examples}
-\example \begin{lstlisting}
-ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
-  300, -428.8, 52.51, 2016.0, 1992.25)
-\end{lstlisting}
-\becomes [7.604061404627978, 11.7932703828279]\done.
 
-\example \begin{lstlisting}
-ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
-  300, -428.8, 52.51, 2016.0, 1875.0)
-\end{lstlisting}
-\becomes [7.594068213694308, 11.807251375203935]\done.
-
-\example \begin{lstlisting}
-ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
-  300, -428.8, NULL, 2016.0, 1875.0)
-\end{lstlisting}
-\becomes [7.594079587029898, 11.807235464326332]\done.
-
-\example \begin{lstlisting}
-ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
-  300, NULL, NULL, 2016.0, 1875.0)
-\end{lstlisting}
-\becomes [7.594080321498365, 11.790440798509207]\done.
-
-\begin{lstlisting}
-ivo_epoch_prop_pos(7.606083572, 11.79044105, NULL,
-  300, -428.8, 52.51, 2016.0, 1875.0)
-\end{lstlisting}
-\becomes [7.594079587020846, 11.807235464339055] \done This last value
-is approximative in the sense that the concrete ``small'' parallax has
-not been fixed normatively.
-
-\example \begin{lstlisting}
-ivo_epoch_prop_pos(NULL, 11.79044105, 125,
-  300, NULL, NULL, 2016.0, 1875.0)
-\end{lstlisting}
-\becomes an error\done.
-
-\example \begin{lstlisting}
-ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
-  300, -428.8, 52.51, NULL, 1875.0)
-\end{lstlisting}
-\becomes an error\done.
-\end{examples}
-
-\subsubsection{ivo\_epoch\_prop(ra, dec, parallax, pmra, pmdec,\\
+\subsubsection{ivo\_epoch\_prop(ra, dec, parallax, pmra, pmdec,
   radial\_velocity, ref\_epoch, out\_epoch)}
 
 This is epoch\_prop\_pos as described in Sect.~\ref{epoch_prop_pos},
@@ -411,8 +367,82 @@ latitude in mas/yr, and the radial velocity in km/s.  As in the input
 parameters, the proper motion in longitude is given for the tangential
 plane (``has ${\textrm cos}(\delta)$ applied'').
 
-\item[Source] This document, version 1.2
+
+\item[Source] This document, version 1.1
 \end{description}
+
+\begin{examples}
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
+300.09877325973605, -428.934593565712, 52.50880381775256]
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  NULL, NULL, NULL, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
+\end{examples}
+
+\subsubsection{ivo\_transform(from\_sys, to\_sys, geo)}
+
+Transforms ADQL geometries (i.e., at least values of type \verb|POINT|,
+\verb|CIRCLE|, or verb|POLYGON|) between various reference systems. The
+function will return a geometry of the same type as the \verb|geo|
+argument.
+
+As specified here, \verb|from_sys| and \verb|to_sys| must be literal
+strings (i.e., they cannot be computed through expressions or be taken
+from database columns), although implementors are free to accept more
+general string expressions as an extension.  The identifiers of the
+reference frames must be taken from the IVOA refframe
+vocabulary\footnote{\url{http://www.ivoa.net/rdf/refframe}}, where
+additional reference frames can be added as needed as described in
+\citet{2023ivoa.spec.0206D}.  Services publishing sky data are advised
+to implement ICRS and GALACTIC at the very least.
+
+Implementations should list the reference frames supported in their
+local descriptions of this function.
+
+Reference frame identifiers are case-sensitive.
+
+For reproducability, all transforms should be implemented as simple
+rotations. This is only a rough approximation to the actual
+relationships between reference systems, and applications requiring high
+levels of precision in references frame transforms have to perform these
+outside of the database.
+
+For equinox-dependent frames, we for now define default equinoxes:
+
+\begin{itemize}
+\item FK5: J2000.0
+\item FK4: J1950.0
+\item ECLIPTIC: J2000.0
+\end{itemize}
+
+A later version of this document may define a four-argument form of
+ivo\_transform which allows the specification of equinoxes or other
+frame-dependent metadata.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+\arg from\_sys (string literal) -- the refframe identifier of the system
+\verb|geo| is in.
+\arg to\_sys (string literal) -- the refframe identifier of the system
+the return value is in.
+\arg geo (GEOMETRY) -- a \verb|POINT|, \verb|CIRCLE|, or \verb|POLYGON|
+(accepting and transforming additional types is permitted)  to transform
+from \verb|from_sys| to \verb|to_sys|.
+\end{args}
+
+\item[Return type] The function returns a value of the same type as
+\verb|geo|
+
+\item[Source] This document, version 1.1\todo{Examples!}
+\end{description}
+
 
 \subsection{Dates and Times}
 
@@ -435,7 +465,7 @@ timestamp.
 \item[Source] This document, version 1.2\todo{Examples!}
 \end{description}
 
-\subsubsection{ivo\_to\_mjd(d TIMESTAMP)}
+\subsubsection{ivo\_to\_mjd(d)}
 
 Converts a database timestamp to a Modified Julian Date as a floating
 point number. This is naive; no corrections for timezones, let alone
@@ -704,6 +734,7 @@ FROM gaiadr3.nss_vim_fl
 \done on the TAP service at \url{http://dc.g-vo.org/tap}.
 \end{examples}
 
+<<<<<<< HEAD
 \subsubsection{ivo\_normal\_random(mu, sigma)}
 
 Returns a random number drawn from a normal distribution
