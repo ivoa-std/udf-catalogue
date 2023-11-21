@@ -12,3 +12,4 @@ ivoatexmeta.tex
 *.fdb_latexmk
 *.fls
 gitmeta.tex
+*.swp
