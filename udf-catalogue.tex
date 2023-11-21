@@ -29,6 +29,7 @@
 \input{exampledef}
 \fi
 
+\newcommand{\aaps}{Astronomy and Astrophysics Supplement}
 
 \title{Catalogue of ADQL User Defined Functions}
 
@@ -696,6 +697,39 @@ lower bound is probably not a good idea for floating point numbers that
 do not have a short and finite binary representation.
 \end{examples}
 
+\subsubsection{ivo\_simbadpoint(identifier)}
+
+Queries Simbad \citep{2000A&AS..143....9W} for a position of
+\verb|identifier| and returns
+a POINT for that position.  This is mainly a convenience function, as
+\verb|identifier| must be a literal (as opposed to a column reference or
+expression).  For mass resolution of identifiers, Simbad's own TAP
+service should be used.
+
+\begin{description}
+\item[Parameters]
+\begin{args}
+	\arg identifier (string literal) -- A Simbad-resolvable identifier.
+\end{args}
+
+\item[Return type] \texttt{POINT}
+
+\item[Source] This document, version 1.1
+\end{description}
+
+\begin{examples}
+\example \verb|ivo_simbadpoint('GJ 699')|
+\becomes \verb|POINT(269.452076958619, 4.69336496657667)|)
+\done (where Simbad returns estimated current positions and hence
+return values will change over time -- significantly so for the present
+example, Barnard's star).
+
+\example \verb|ivo_simbadpoint('an invalid identifier')|
+\becomes an error
+\done The error message should ideally state that the identifier passed
+in (which ought to be included in the message) cannot be resolved by Simbad.
+\end{examples}
+
 \appendix
 
 \section{Changes from Previous Versions}
@@ -704,6 +738,7 @@ do not have a short and finite binary representation.
 
 \begin{itemize}
 \item Adding \verb|ivo_epoch_prop| as astrometry function (gavo, esa)
+\item Added \verb|ivo_simbadpoint| as convenience function (gavo, esa)
 \end{itemize}
 
 \subsection{Changes from EN-1.0}
