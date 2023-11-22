@@ -337,17 +337,49 @@ position.  NULL values here are an error.
 
 \begin{examples}
 \example \begin{lstlisting}
-<<<<<<< HEAD
-ivo_epoch_prop(7.606083572, 11.79044105, 125,
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
   300, -428.8, 52.51, 2016.0, 1992.25)
 \end{lstlisting}
-\becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
-300.09877325973605, -428.934593565712, 52.50880381775256]
+\becomes [7.604061404627978, 11.7932703828279]\done
+where [] denote an array and we use DALI representation.
+
 \example \begin{lstlisting}
-ivo_epoch_prop(7.606083572, 11.79044105, 125,
-  NULL, NULL, NULL, 2016.0, 1992.25)
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, 2016.0, 1875.0)
 \end{lstlisting}
-\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
+\becomes [7.594068213694308, 11.807251375203935]\done.
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, -428.8, NULL, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes [7.594079587029898, 11.807235464326332]\done.
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, NULL, NULL, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes [7.594080321498365, 11.790440798509207]\done.
+
+\begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, NULL,
+  300, -428.8, 52.51, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes [7.594079587020846, 11.807235464339055] \done This last value
+is approximative in the sense that the concrete ``small'' parallax has
+not been fixed normatively.
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(NULL, 11.79044105, 125,
+  300, NULL, NULL, 2016.0, 1875.0)
+\end{lstlisting}
+\becomes an error.
+
+\example \begin{lstlisting}
+ivo_epoch_prop_pos(7.606083572, 11.79044105, 125,
+  300, -428.8, 52.51, NULL, 1875.0)
+\end{lstlisting}
+\becomes an error.
 \end{examples}
 
 
@@ -385,10 +417,10 @@ ivo_epoch_prop(7.606083572, 11.79044105, 125,
 \becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
 \end{examples}
 
-\subsubsection{ivo\_transform(from\_sys, to\_sys, geo)}
+\subsubsection{ivo\_geom\_transform(from\_sys, to\_sys, geo)}
 
 Transforms ADQL geometries (i.e., at least values of type \verb|POINT|,
-\verb|CIRCLE|, or verb|POLYGON|) between various reference systems. The
+\verb|CIRCLE|, or \verb|POLYGON|) between various reference systems. The
 function will return a geometry of the same type as the \verb|geo|
 argument.
 
@@ -422,8 +454,8 @@ For equinox-dependent frames, we for now define default equinoxes:
 \end{itemize}
 
 A later version of this document may define a four-argument form of
-ivo\_transform which allows the specification of equinoxes or other
-frame-dependent metadata.
+ivo\_transform to support passing equinoxes or other metadata
+influencing the transformation.
 
 \begin{description}
 \item[Parameters]
@@ -440,9 +472,23 @@ from \verb|from_sys| to \verb|to_sys|.
 \item[Return type] The function returns a value of the same type as
 \verb|geo|
 
-\item[Source] This document, version 1.1\todo{Examples!}
+\item[Source] This document, version 1.2
 \end{description}
 
+\begin{examples}
+\example \verb|ivo_geom_transform('ICRS', 'GALACTIC', POINT(120, -23))|
+\becomes \verb|[241.121831182, 3.62785788087]|\done
+in limited-precision DALI representation, where [] denote an array.
+
+\example \verb|ivo_geom_transform('FK4', 'GALACTIC', CIRCLE(189.70303055, 22.96240006, 3))|
+\becomes \verb|[275.00025405, 84.99996154, 3]|.
+
+\example \verb|ivo_geom_transform('FK4', 'GALACTIC', CIRCLE(189.70303055, 22.96240006, 3))|
+\becomes \verb|[275.00025405, 84.99996154, 3]|.
+
+\example \verb|ivo_geom_transform('GALACTIC', 'FK5', POLYGON(5, 3, 4, 4, 4.5, 2))|
+\becomes \verb|[266.44721, -23.107310, 264.95088, -23.434037, 267.09936, -24.051919]|.
+\end{examples}
 
 \subsection{Dates and Times}
 
@@ -462,8 +508,25 @@ timestamp.
 
 \item[Return type] \verb|REAL|
 
-\item[Source] This document, version 1.2\todo{Examples!}
+\item[Source] This document, version 1.2
 \end{description}
+
+\begin{examples}
+\example \verb|ivo_to_jd(CAST('2000-01-02T12:00:00' AS TIMESTAMP))|
+\becomes \verb|2451546.0|
+\done.
+
+\example \verb|ivo_to_jd('1910-12-31T06:00:00')|
+\becomes \verb|2419036.75|
+\done While not strictly necessary for compliance, implementations
+SHOULD accept reasonable strings -- primarily, DALI-style ISO dates --
+as arguments, in particular when they do not implement the optional CAST
+construct.
+
+\example \verb|ivo_to_jd(NULL)|
+\becomes NULL
+\done.
+\end{examples}
 
 \subsubsection{ivo\_to\_mjd(d)}
 
@@ -734,7 +797,6 @@ FROM gaiadr3.nss_vim_fl
 \done on the TAP service at \url{http://dc.g-vo.org/tap}.
 \end{examples}
 
-<<<<<<< HEAD
 \subsubsection{ivo\_normal\_random(mu, sigma)}
 
 Returns a random number drawn from a normal distribution
@@ -846,7 +908,7 @@ service should be used.
 
 \begin{examples}
 \example \verb|ivo_simbadpoint('GJ 699')|
-\becomes \verb|POINT(269.452076958619, 4.69336496657667)|)
+\becomes \verb|[269.452076958619, 4.69336496657667]|
 \done (where Simbad returns estimated current positions and hence
 return values will change over time -- significantly so for the present
 example, Barnard's star).
@@ -864,7 +926,8 @@ in (which ought to be included in the message) cannot be resolved by Simbad.
 \subsection{Changes from EN-1.1}
 
 \begin{itemize}
-\item Added \verb|ivo_epoch_prop| as astrometry function (gavo, esa)
+\item Added \verb|ivo_epoch_prop| and \verb|ivo_geom_transform|
+as astrometry function (gavo, esa)
 \item Added \verb|ivo_simbadpoint| as convenience function (gavo, esa)
 \item Added \verb|ivo_normal_random| as a statstics function (gavo, esa)
 \item Added \verb|ivo_to_jd| and \verb|ivo_to_mjd| as a datetime
