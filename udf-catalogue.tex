@@ -32,8 +32,6 @@
 \input{exampledef}
 \fi
 
-\newcommand{\aaps}{Astronomy and Astrophysics Supplement}
-
 \title{Catalogue of ADQL User Defined Functions}
 
 % see ivoatexDoc for what group names to use here
@@ -41,7 +39,7 @@
 
 \author[https://wiki.ivoa.net/twiki/bin/view/IVOA/JonJuaristiCampillo]{Jon Juaristi Campillo}
 \author[https://wiki.ivoa.net/twiki/bin/view/IVOA/MarkusDemleitner]{Markus Demleitner}
-
+\author[https://wiki.ivoa.net/twiki/bin/view/IVOA/TamaraCivera]{Tamara Civera}
 
 \editor[https://wiki.ivoa.net/twiki/bin/view/IVOA/JonJuaristiCampillo]{Jon Juaristi Campillo}
 
@@ -923,6 +921,69 @@ example, Barnard's star).
 in (which ought to be included in the message) cannot be resolved by Simbad.
 \end{examples}
 
+
+\subsection{Celestial Conversion Functions}
+
+\subsubsection{ivo\_hms\_to\_degrees(hms)}
+
+This function converts hms (hours, minutes, seconds) to degrees format. This is useful for right ascension (RA) conversion, since hms is fairly standard method of presenting RA coordinates.
+
+\begin{description}
+\item[Parameters]
+
+\begin{args}
+	\arg hms (TEXT) -- hms to be converted. The following syntaxes must be accepted: 'h:m:s', 'hhmmss' and 'hHmMsS'. Hours and minutes should be integer and seconds can be decimal. 
+\end{args}
+
+\item[Return type] \texttt{REAL}
+
+\end{description}
+
+\begin{examples}
+\example \verb|ivo_hms_to_degrees('3:34:45.4')|
+\becomes 53.6891667
+\done.
+
+\example \verb|ivo_hms_to_degrees('3h34m45.4s')|
+\becomes 53.6891667
+\done.
+
+\example \verb|ivo_hms_to_degrees('3H34M45.4S')|
+\becomes 53.6891667
+\done.
+
+\end{examples}
+
+\subsubsection{ivo\_dms\_to\_degrees(dms)}
+
+This function converts dms (degrees, minutes, seconds) to degrees format. This is useful for declination conversion (DEC) conversion, since dms is fairly standard method of presenting DEC coordinates.
+
+\begin{description}
+\item[Parameters]
+
+\begin{args}
+	\arg dms (TEXT) -- dms to be converted. The following syntaxes must be accepted: 'd:m:s', 'ddmmss' and 'dDmMsS'. Degrees and minutes should be integer and seconds can be decimal.
+\end{args}
+
+\item[Return type] \texttt{REAL}
+
+\end{description}
+
+\begin{examples}
+\example \verb|ivo_dms_to_degrees('42:9:6.768')|
+\becomes 42.15188
+\done.
+
+\example \verb|ivo_dms_to_degrees('42d9m6.768s')|
+\becomes 42.15188
+\done.
+
+\example \verb|ivo_dms_to_degrees('42D9M6.768S')|
+\becomes 42.15188
+\done.
+
+\end{examples}
+
 \appendix
 
 \section{Changes from Previous Versions}
@@ -933,9 +994,11 @@ in (which ought to be included in the message) cannot be resolved by Simbad.
 \item Added \verb|ivo_epoch_prop| and \verb|ivo_geom_transform|
 as astrometry function (gavo, esa)
 \item Added \verb|ivo_simbadpoint| as convenience function (gavo, esa)
-\item Added \verb|ivo_normal_random| as a statstics function (gavo, esa)
+\item Added \verb|ivo_normal_random| as a statistics function (gavo, esa)
 \item Added \verb|ivo_to_jd| and \verb|ivo_to_mjd| as a datetime
-functions (gavo, esa)
+functions (gavo, esa, cefca-oaj)
+\item Added \verb|ivo_hms_to_degrees| and \verb|ivo_dms_to_degrees| as a celestial
+conversion functions (cefca-oaj)
 \end{itemize}
 
 \subsection{Changes from EN-1.0}
