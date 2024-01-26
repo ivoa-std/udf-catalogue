@@ -962,7 +962,7 @@ This function converts dms (degrees, minutes, seconds) to degrees format. This i
 \item[Parameters]
 
 \begin{args}
-	\arg dms (TEXT) -- dms to be converted. The following syntaxes must be accepted: 'd:m:s', 'ddmmss' and 'dDmMsS'. Degrees and minutes should be integer and seconds can be decimal.
+	\arg dms (TEXT) -- dms to be converted. The following syntaxes must be accepted: 'd:m:s', 'ddmmss' and 'dDmMsS'. Degrees and minutes should be integer and seconds can be decimal. A preceding + or - sign is allowed.
 \end{args}
 
 \item[Return type] \texttt{REAL}
@@ -980,6 +980,22 @@ This function converts dms (degrees, minutes, seconds) to degrees format. This i
 
 \example \verb|ivo_dms_to_degrees('42D9M6.768S')|
 \becomes 42.15188
+\done.
+
+\example \verb|ivo_dms_to_degrees('-00:15:00')|
+\becomes -0.25
+\done.
+
+\example \verb|ivo_dms_to_degrees('+00:15:00')|
+\becomes 0.25
+\done.
+
+\example \verb|ivo_dms_to_degrees('-0d15m0s')|
+\becomes -0.25
+\done.
+
+\example \verb|ivo_dms_to_degrees('+0d15m0s')|
+\becomes 0.25
 \done.
 
 \end{examples}
