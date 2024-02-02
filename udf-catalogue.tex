@@ -932,7 +932,7 @@ This function converts hms (hours, minutes, seconds) to degrees format. This is 
 \item[Parameters]
 
 \begin{args}
-	\arg hms (TEXT) -- hms to be converted. The following syntaxes must be accepted: 'h:m:s', 'hhmmss' and 'hHmMsS'. Hours and minutes should be integer and seconds can be decimal. 
+	\arg hms (TEXT) -- hms to be converted. The following syntaxes must be accepted: 'h:m:s', 'hhmmss' and 'hHmMsS'. Hours and minutes should be integer and seconds can be decimal. The function returns NULL on unparsable input.
 \end{args}
 
 \item[Return type] \texttt{REAL}
@@ -956,7 +956,7 @@ This function converts hms (hours, minutes, seconds) to degrees format. This is 
 
 \subsubsection{ivo\_dms\_to\_degrees(dms)}
 
-This function converts dms (degrees, minutes, seconds) to degrees format. This is useful for declination conversion (DEC) conversion, since dms is fairly standard method of presenting DEC coordinates.
+This function converts dms (degrees, minutes, seconds) to degrees format. This is useful for declination conversion (DEC) conversion, since dms is fairly standard method of presenting DEC coordinates. The function returns NULL on unparsable input.
 
 \begin{description}
 \item[Parameters]
