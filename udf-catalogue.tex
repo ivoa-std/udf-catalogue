@@ -401,8 +401,12 @@ latitude in mas/yr, and the radial velocity in km/s.  As in the input
 parameters, the proper motion in longitude is given for the tangential
 plane (``has ${\textrm cos}(\delta)$ applied'').
 
+Items that are NULL on input MUST be NULL (in VOTable arrays, NaN) on
+output, and when a single component of the proper motion is NULL, the
+other component must be NULL-ed out on output, too.  Similarly, when a
+NULL parallax is passed in, the RV must be NULL-ed out on output, too.
 
-\item[Source] This document, version 1.1
+\item[Source] This document, version 1.2
 \end{description}
 
 \begin{examples}
@@ -412,11 +416,34 @@ ivo_epoch_prop(7.606083572, 11.79044105, 125,
 \end{lstlisting}
 \becomes [7.6040614046279735, 11.793270382827929, 125.01993165584682,\\
 300.09877325973605, -428.934593565712, 52.50880381775256]
+
 \example \begin{lstlisting}
 ivo_epoch_prop(7.606083572, 11.79044105, 125,
   NULL, NULL, NULL, 2016.0, 1992.25)
 \end{lstlisting}
-\becomes [7.606083572000001, 11.79044105, 125.0, 0.0, 0.0, 0.0]
+\becomes [7.606083572, 11.79044105, 125, NULL, NULL, NULL]
+
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, NULL,
+  300, -428.8, 52.51, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.604061727024453, 11.79326993174991, NaN, \\
+  300.0030911918108, -428.79783514643105, NaN]
+
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  21, NULL, NULL, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.606083572000001, 11.79044105, 125.0, NULL, NULL, NULL]
+
+\example \begin{lstlisting}
+ivo_epoch_prop(7.606083572, 11.79044105, 125,
+  300, -428.8, NULL, 2016.0, 1992.25)
+\end{lstlisting}
+\becomes [7.604061727024712, 11.793269931749549, 124.9999997730655,\\
+  300.0030911152833, -428.79783503705033, NULL]
+
+
 \end{examples}
 
 \subsubsection{ivo\_geom\_transform(from\_sys, to\_sys, geo)}
@@ -937,6 +964,7 @@ This function converts hms (hours, minutes, seconds) to degrees format. This is 
 
 \item[Return type] \texttt{REAL}
 
+\item[Source] This document, version 1.2
 \end{description}
 
 \begin{examples}
@@ -967,6 +995,7 @@ This function converts dms (degrees, minutes, seconds) to degrees format. This i
 
 \item[Return type] \texttt{REAL}
 
+\item[Source] This document, version 1.2
 \end{description}
 
 \begin{examples}
@@ -1003,6 +1032,13 @@ This function converts dms (degrees, minutes, seconds) to degrees format. This i
 \appendix
 
 \section{Changes from Previous Versions}
+
+\subsection{Changes from PEN-20240409}
+
+\begin{itemize}
+\item Now prescribing that \verb|ivo_epoch_prop| has to NULL out
+output values that were NULL on input.
+\end{itemize}
 
 \subsection{Changes from EN-1.1}
 
