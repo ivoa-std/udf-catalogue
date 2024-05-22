@@ -403,8 +403,9 @@ plane (``has ${\textrm cos}(\delta)$ applied'').
 
 Items that are NULL on input MUST be NULL (in VOTable arrays, NaN) on
 output, and when a single component of the proper motion is NULL, the
-other component must be NULL-ed out on output, too.  Similarly, when a
-NULL parallax is passed in, the RV must be NULL-ed out on output, too.
+other component must be NULL-ed out on output, too.  Since RV
+propagation is impossible without a parallax, when the parallax is NULL,
+the RV in the output must be taken from the input RV.
 
 \item[Source] This document, version 1.2
 \end{description}
@@ -428,7 +429,7 @@ ivo_epoch_prop(7.606083572, 11.79044105, NULL,
   300, -428.8, 52.51, 2016.0, 1992.25)
 \end{lstlisting}
 \becomes [7.604061727024453, 11.79326993174991, NaN, \\
-  300.0030911918108, -428.79783514643105, NaN]
+  300.0030911918108, -428.79783514643105, 52.51]
 
 \example \begin{lstlisting}
 ivo_epoch_prop(7.606083572, 11.79044105, 125,
@@ -442,7 +443,6 @@ ivo_epoch_prop(7.606083572, 11.79044105, 125,
 \end{lstlisting}
 \becomes [7.604061727024712, 11.793269931749549, 124.9999997730655,\\
   300.0030911152833, -428.79783503705033, NULL]
-
 
 \end{examples}
 
