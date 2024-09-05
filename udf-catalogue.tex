@@ -894,7 +894,7 @@ This function converts hms (hours, minutes, seconds) to degrees format. This is 
 \item[Parameters]
 
 \begin{args}
-	\arg hms (TEXT) -- hms to be converted. The following syntaxes must be accepted: 'h:m:s', 'hhmmss' and 'hHmMsS'. Hours and minutes should be integer and seconds can be decimal. The function returns NULL on unparsable input.
+	\arg hms (TEXT) -- hms to be converted. The following syntaxes must be accepted: `{\it h}{\tt :}{\it m}{\tt :}{\it s}', `{\it h}{\tt h}{\it m}{\tt m}{\it s}{\tt s}' and `{\it h}{\tt H}{\it m}{\tt M}{\it s}{\tt S}'. Hours and minutes should be integer and seconds can be decimal. The function returns NULL on unparsable input.
 \end{args}
 
 \item[Return type] \texttt{REAL}
@@ -924,7 +924,7 @@ This function converts dms (degrees, minutes, seconds) to degrees format. This i
 \item[Parameters]
 
 \begin{args}
-	\arg dms (TEXT) -- dms to be converted. The following syntaxes must be accepted: 'd:m:s', 'ddmmss' and 'dDmMsS'. Degrees and minutes should be integer and seconds can be decimal. A preceding + or - sign is allowed.
+	\arg dms (TEXT) -- dms to be converted. The following syntaxes must be accepted: `{\it d}{\tt :}{\it m}{\tt :}{\it s}', `{\it d}{\tt d}{\it m}{\tt m}{\it s}{\tt s}' and `{\it d}{\tt D}{\it m}{\tt M}{\it s}{\tt S}'. Degrees and minutes should be integer and seconds can be decimal. A preceding + or - sign is allowed.
 \end{args}
 
 \item[Return type] \texttt{REAL}
