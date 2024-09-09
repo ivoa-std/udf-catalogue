@@ -1,3 +1,5 @@
+[![PDF-Preview](https://img.shields.io/badge/Preview-PDF-blue)](../../releases/download/auto-pdf-preview/udf-catalogue-draft.pdf)
+
 ## ADQL User Defined Functions catalogue
 
 This is the source code for the list of interoperable user defined functions
