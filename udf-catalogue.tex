@@ -856,11 +856,13 @@ do not have a short and finite binary representation.
 \subsubsection{ivo\_simbadpoint(identifier)}
 
 Queries Simbad \citep{2000A&AS..143....9W} for a position of
-\verb|identifier| and returns
-a POINT for that position.  This is mainly a convenience function, as
-\verb|identifier| must be a literal (as opposed to a column reference or
-expression).  For mass resolution of identifiers, Simbad's own TAP
-service should be used.
+\verb|identifier| and returns a POINT for that position. This is mainly
+a convenience function, as \verb|identifier| must be a literal (as
+opposed to a column reference or expression). Despite its name, this
+function actually queries the CDS Sesame service. The latter queries
+Simbad, NED and VizieR in order to resolve object names. For mass
+resolution of identifiers, the appropriate TAP service (i.e. Simbad's,
+VizieR's or NED's own TAP service) should be used.
 
 \begin{description}
 \item[Parameters]
